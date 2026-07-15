@@ -268,6 +268,26 @@
     border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:13.5px;
   }
 
+  /* Xem sách nhúng ngay trong trang */
+  .viewer-overlay{ padding:0; }
+  .viewer-overlay .viewer-modal{
+    width:90%; height:90vh; margin:auto;
+    background:var(--panel); border:1px solid var(--line-strong); border-radius:16px;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .viewer-header{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 16px; border-bottom:1px solid var(--line); flex-shrink:0;
+  }
+  .viewer-title{ font-weight:700; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .viewer-actions{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .viewer-actions .viewer-newtab{ padding:9px 14px; font-size:12.5px; white-space:nowrap; }
+  .viewer-body{ flex:1; background:#000; }
+  .viewer-body iframe{ width:100%; height:100%; border:none; display:block; }
+  @media(max-width:700px){
+    .viewer-overlay .viewer-modal{ max-height:100vh; border-radius:0; }
+  }
+
   @media(max-width:600px){
     .hero{padding:28px 16px 18px;}
     .controls, .grid-wrap, .qr-section{padding-left:16px; padding-right:16px;}
@@ -366,7 +386,7 @@
   <div class="modal">
     <span class="admin-badge">🟢 Chế độ quản trị</span>
     <h3 id="bookModalTitle">Thêm sách mới</h3>
-    <div class="sub">Dán link Google Drive đã chia sẻ ở chế độ "Bất kỳ ai có đường liên kết".</div>
+    <div class="sub">Dán link Google Drive (đã chia sẻ công khai) hoặc link video YouTube.</div>
     <div class="field"><label>Tên sách / audio *</label><input type="text" id="fTitle" placeholder="VD: Nhà Giả Kim"></div>
     <div class="field"><label>Tác giả</label><input type="text" id="fAuthor" placeholder="VD: Paulo Coelho"></div>
     <div class="field"><label>Thể loại *</label>
@@ -377,12 +397,13 @@
         <option value="ebook">📘 Ebook / Sách (PDF, EPUB)</option>
         <option value="audio">🎧 Audio book</option>
         <option value="comic">📗 Truyện tranh</option>
+        <option value="video">🎬 Video (YouTube)</option>
       </select>
     </div>
     <div class="field">
-      <label>Link Google Drive *</label>
-      <input type="url" id="fLink" placeholder="https://drive.google.com/...">
-      <div class="hint">Nhớ để chế độ chia sẻ công khai — file vẫn nằm trên Drive, web chỉ lưu đường link để tiết kiệm dung lượng.</div>
+      <label>Link Google Drive hoặc YouTube *</label>
+      <input type="url" id="fLink" placeholder="https://drive.google.com/... hoặc https://youtube.com/watch?v=...">
+      <div class="hint">Với Drive: nhớ để chế độ chia sẻ công khai. Với YouTube: dán link video bình thường, hệ thống tự nhận diện.</div>
     </div>
     <div class="form-msg" id="bookMsg"></div>
     <div class="modal-actions">
@@ -405,9 +426,26 @@
         <button class="btn-primary" id="addCatBtn" style="flex:0 0 auto; padding:10px 16px;">Thêm</button>
       </div>
     </div>
+    <div class="form-msg" id="catMsg"></div>
     <div id="catList" style="display:flex; flex-direction:column; gap:8px; margin-top:14px;"></div>
     <div class="modal-actions">
       <button class="btn-secondary" id="catCloseBtn" style="flex:1;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= Modal: Xem sách ngay trong trang (nhúng Google Drive) ================= -->
+<div class="overlay viewer-overlay" id="viewerOverlay">
+  <div class="viewer-modal">
+    <div class="viewer-header">
+      <div class="viewer-title" id="viewerTitle">Đang mở sách…</div>
+      <div class="viewer-actions">
+        <a href="#" target="_blank" rel="noopener" class="btn-secondary viewer-newtab" id="viewerNewTab" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Mở tab mới ↗</a>
+        <button class="icon-btn" id="viewerClose" title="Đóng">✕</button>
+      </div>
+    </div>
+    <div class="viewer-body">
+      <iframe id="viewerFrame" src="about:blank" allow="autoplay" allowfullscreen></iframe>
     </div>
   </div>
 </div>
@@ -431,7 +469,7 @@ const firebaseConfig = {
   appId: "1:1056689777785:web:6c96d2bf55cd7a6e17b8a8"
 };
 // Mật khẩu quản trị — đổi thành mật khẩu riêng trước khi dùng thật.
-const ADMIN_PASSWORD = "phubai2026";
+const ADMIN_PASSWORD = "admin2026";
 // Link mã QR trỏ tới — mặc định là trang web đang chạy trên GitHub Pages.
 const QR_TARGET_URL = "https://idwn0811.github.io/-DigitalLibrary/";
 
@@ -495,9 +533,9 @@ categoriesRef.once("value").then(snap => {
   if (!snap.exists()){
     const seed = {};
     DEFAULT_CATEGORIES.forEach((name, i) => { seed["c" + (i + 1)] = name; });
-    categoriesRef.set(seed);
+    categoriesRef.set(seed).catch(err => console.error("Không tạo được thể loại mặc định:", err.message));
   }
-});
+}).catch(err => console.error("Không đọc được nhánh categories:", err.message));
 
 categoriesRef.on("value", (snap) => {
   const val = snap.val() || {};
@@ -537,17 +575,26 @@ function renderCategoryManager(){
 
 document.getElementById("addCatBtn").addEventListener("click", () => {
   const input = document.getElementById("newCatName");
+  const msg = document.getElementById("catMsg");
+  msg.className = "form-msg";
   const name = input.value.trim();
   if (!name) return;
-  if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())){ alert("Thể loại này đã có rồi."); return; }
-  categoriesRef.push(name);
-  input.value = "";
+  if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())){ msg.textContent = "Thể loại này đã có rồi."; msg.classList.add("error"); return; }
+  categoriesRef.push(name)
+    .then(() => { input.value = ""; msg.textContent = "Đã thêm thể loại!"; msg.classList.add("ok"); })
+    .catch(err => {
+      msg.textContent = "Không ghi được: " + err.message + " — kiểm tra lại Rules của Realtime Database (nhánh \"categories\" cần .write: true).";
+      msg.classList.add("error");
+    });
 });
 document.getElementById("catList").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-delcat]");
   if (!btn) return;
+  const msg = document.getElementById("catMsg");
+  msg.className = "form-msg";
   if (confirm("Xoá thể loại này? Sách đã gắn thể loại cũ vẫn giữ nguyên nhãn, chỉ ẩn khỏi danh sách lọc.")){
-    categoriesRef.child(btn.dataset.delcat).remove();
+    categoriesRef.child(btn.dataset.delcat).remove()
+      .catch(err => { msg.textContent = "Không xoá được: " + err.message; msg.classList.add("error"); });
   }
 });
 document.getElementById("catCloseBtn").addEventListener("click", () => document.getElementById("catOverlay").classList.remove("open"));
@@ -581,7 +628,8 @@ function renderStats(){
 const typeMeta = {
   ebook: { icon:"📘", label:"Ebook", action:"Đọc ngay" },
   audio: { icon:"🎧", label:"Audio", action:"Nghe ngay" },
-  comic: { icon:"📗", label:"Truyện tranh", action:"Xem ngay" }
+  comic: { icon:"📗", label:"Truyện tranh", action:"Xem ngay" },
+  video: { icon:"🎬", label:"Video", action:"Xem video" }
 };
 
 function renderGrid(){
@@ -618,6 +666,7 @@ function renderGrid(){
       </div>
       <div class="card-actions">
         <button class="btn-open" data-open="${b.id}">${meta.action} ↗</button>
+        ${isAdmin ? `<button class="admin-mini" data-edit="${b.id}" title="Sửa">✏️</button>` : ""}
         ${isAdmin ? `<button class="admin-mini" data-del="${b.id}" title="Xoá">🗑️</button>` : ""}
       </div>
     </div>`;
@@ -636,16 +685,62 @@ function markViewedOnce(id){
   booksRef.child(id).child("views").transaction(v => (v||0)+1);
 }
 
+/* =====================================================================
+   Chuyển link Google Drive hoặc YouTube thành link nhúng xem trước (iframe)
+   Drive: /file/d/{id}/..., ?id={id}, /open?id={id}, /folders/{id}
+   YouTube: watch?v={id}, youtu.be/{id}, /shorts/{id}, /embed/{id}
+   ===================================================================== */
+function getDriveEmbedUrl(link){
+  let m = link.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/);
+  if (m) return `https://www.youtube.com/embed/${m[1]}`;
+
+  m = link.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  m = link.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/embeddedfolderview?id=${m[1]}#list`;
+  m = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  return null;
+}
+
+const viewerOverlay = document.getElementById("viewerOverlay");
+const viewerFrame = document.getElementById("viewerFrame");
+const viewerTitle = document.getElementById("viewerTitle");
+const viewerNewTab = document.getElementById("viewerNewTab");
+
+function openViewer(book){
+  const embedUrl = getDriveEmbedUrl(book.driveLink);
+  viewerTitle.textContent = book.title;
+  viewerNewTab.href = book.driveLink;
+  viewerFrame.src = embedUrl || "about:blank";
+  viewerOverlay.classList.add("open");
+  if (!embedUrl){
+    // Không đọc được ID từ link — mở thẳng tab mới thay vì để khung trắng
+    window.open(book.driveLink, "_blank", "noopener");
+  }
+}
+function closeViewer(){
+  viewerOverlay.classList.remove("open");
+  viewerFrame.src = "about:blank"; // dừng phát audio/video khi đóng
+}
+document.getElementById("viewerClose").addEventListener("click", closeViewer);
+viewerOverlay.addEventListener("click", (e) => { if (e.target === viewerOverlay) closeViewer(); });
+
 document.getElementById("grid").addEventListener("click", (e) => {
   const openBtn = e.target.closest("[data-open]");
+  const editBtn = e.target.closest("[data-edit]");
   const delBtn = e.target.closest("[data-del]");
   if (openBtn){
     const id = openBtn.dataset.open;
     const book = allBooks.find(b => b.id === id);
     if (book){
       booksRef.child(id).child("opens").transaction(v => (v||0)+1);
-      window.open(book.driveLink, "_blank", "noopener");
+      openViewer(book);
     }
+  }
+  if (editBtn){
+    const book = allBooks.find(b => b.id === editBtn.dataset.edit);
+    if (book) openBookModal(book);
   }
   if (delBtn){
     const id = delBtn.dataset.del;
@@ -715,11 +810,23 @@ updateAdminUI();
    9) THÊM SÁCH MỚI
    ===================================================================== */
 const bookOverlay = document.getElementById("bookOverlay");
-document.getElementById("fabAdd").addEventListener("click", () => {
-  ["fTitle","fAuthor","fLink"].forEach(id => document.getElementById(id).value = "");
+let editingBookId = null;
+
+function openBookModal(book){
+  editingBookId = book ? book.id : null;
+  document.getElementById("bookModalTitle").textContent = book ? "Sửa sách" : "Thêm sách mới";
+  document.getElementById("bookSubmit").textContent = book ? "Cập nhật" : "Lưu sách";
+  document.getElementById("fTitle").value = book ? book.title : "";
+  document.getElementById("fAuthor").value = book ? (book.author || "") : "";
+  document.getElementById("fType").value = book ? book.type : "ebook";
+  document.getElementById("fLink").value = book ? book.driveLink : "";
+  renderCategorySelect();
+  if (book) document.getElementById("fCategory").value = book.category;
   document.getElementById("bookMsg").className = "form-msg";
   bookOverlay.classList.add("open");
-});
+}
+
+document.getElementById("fabAdd").addEventListener("click", () => openBookModal(null));
 document.getElementById("bookCancel").addEventListener("click", () => bookOverlay.classList.remove("open"));
 
 document.getElementById("bookSubmit").addEventListener("click", () => {
@@ -734,20 +841,29 @@ document.getElementById("bookSubmit").addEventListener("click", () => {
   if (!title || !link){
     msg.textContent = "Vui lòng nhập tên sách và link Google Drive."; msg.classList.add("error"); return;
   }
-  if (!link.includes("drive.google.com")){
-    msg.textContent = "Link phải là link Google Drive hợp lệ."; msg.classList.add("error"); return;
+  if (!link.includes("drive.google.com") && !link.includes("youtube.com") && !link.includes("youtu.be")){
+    msg.textContent = "Link phải là link Google Drive hoặc YouTube hợp lệ."; msg.classList.add("error"); return;
   }
   if (!category){
     msg.textContent = "Chưa có thể loại nào — vào \"🏷️ Thể loại\" để thêm trước."; msg.classList.add("error"); return;
   }
 
-  booksRef.push({
-    title, author, category, type, driveLink: link,
-    views:0, opens:0, addedAt: Date.now(), addedBy: "admin"
-  }).then(() => {
-    msg.textContent = "Đã thêm sách thành công!"; msg.classList.add("ok");
-    setTimeout(() => bookOverlay.classList.remove("open"), 700);
-  }).catch(err => { msg.textContent = "Lỗi: " + err.message; msg.classList.add("error"); });
+  if (editingBookId){
+    booksRef.child(editingBookId).update({
+      title, author, category, type, driveLink: link
+    }).then(() => {
+      msg.textContent = "Đã cập nhật sách!"; msg.classList.add("ok");
+      setTimeout(() => bookOverlay.classList.remove("open"), 700);
+    }).catch(err => { msg.textContent = "Lỗi: " + err.message; msg.classList.add("error"); });
+  } else {
+    booksRef.push({
+      title, author, category, type, driveLink: link,
+      views:0, opens:0, addedAt: Date.now(), addedBy: "admin"
+    }).then(() => {
+      msg.textContent = "Đã thêm sách thành công!"; msg.classList.add("ok");
+      setTimeout(() => bookOverlay.classList.remove("open"), 700);
+    }).catch(err => { msg.textContent = "Lỗi: " + err.message; msg.classList.add("error"); });
+  }
 });
 
 /* =====================================================================
