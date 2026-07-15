@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thư Viện Số THCS Phú Bài</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<!-- ================================================================
+  FIREBASE — CDN SDK (chỉ dùng Realtime Database, KHÔNG dùng Auth)
+================================================================= -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<style>
+  :root{
+    --radius-pill:999px;
+    --radius-card:18px;
+    --ff-display:'Be Vietnam Pro',sans-serif;
+    --ff-body:'Be Vietnam Pro',sans-serif;
+    --ff-mono:'JetBrains Mono',monospace;
+  }
+  [data-theme="light"]{
+    --bg-app:#faf7ef; --bg-app-2:#f4efe0;
+    --panel:#ffffff; --panel-translucent:rgba(255,255,255,.86);
+    --card-1:#ffffff; --card-2:#f7f2e5;
+    --input-bg:#faf7ef;
+    --line:rgba(23,27,46,.10); --line-strong:rgba(180,130,30,.38);
+    --gold:#c8912f; --gold-soft:#a9741d; --gold-dim:rgba(200,145,47,.12);
+    --on-gold:#ffffff;
+    --ink-hi:#171b2e; --ink-mid:#525873; --ink-low:#878da8;
+    --green:#1f9d6c; --red:#b1402a;
+    --shadow-card:0 10px 26px -16px rgba(23,27,46,.16);
+    --overlay-bg:rgba(23,27,46,.35);
+  }
+  [data-theme="dark"]{
+    --bg-app:#080c1e; --bg-app-2:#0d1330;
+    --panel:#131a3d; --panel-translucent:rgba(13,19,48,.86);
+    --card-1:#131a3d; --card-2:#0d1330;
+    --input-bg:#0d1330;
+    --line:rgba(232,184,75,.20); --line-strong:rgba(232,184,75,.42);
+    --gold:#e8b84b; --gold-soft:#f3d78a; --gold-dim:rgba(232,184,75,.12);
+    --on-gold:#0d1330;
+    --ink-hi:#f6f3ea; --ink-mid:#b7bedb; --ink-low:#7c84a8;
+    --green:#3ddc97; --red:#c0563d;
+    --shadow-card:0 12px 30px -14px rgba(0,0,0,.55);
+    --overlay-bg:rgba(6,9,22,.72);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--ff-body);
+    background:
+      radial-gradient(circle at 15% -10%, var(--gold-dim), transparent 40%),
+      radial-gradient(circle at 100% 0%, rgba(61,220,151,.05), transparent 35%),
+      var(--bg-app);
+    color:var(--ink-hi);
+    min-height:100%;
+    -webkit-font-smoothing:antialiased;
+    transition:background .3s, color .3s;
+  }
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  ::selection{background:var(--gold); color:var(--on-gold);}
+
+  .app-shell{ min-height:100vh; transition:max-width .35s ease, padding .35s ease; }
+  .app-shell.mode-desktop{ max-width:1240px; margin:0 auto; }
+  .app-shell.mode-mobile{
+    max-width:430px; margin:28px auto; border:1px solid var(--line);
+    border-radius:34px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,.35);
+    background:var(--panel);
+  }
+  .app-shell.mode-auto{ max-width:1240px; margin:0 auto; }
+
+  header.topbar{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:16px 22px;
+    background:var(--panel-translucent); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand .mark{
+    width:36px; height:36px; border-radius:10px;
+    display:grid; place-items:center;
+    background:linear-gradient(145deg, var(--gold), var(--gold-soft));
+    color:var(--on-gold); font-weight:800; font-size:16px;
+  }
+  .brand .name{font-weight:700; font-size:15px; line-height:1.15;}
+  .brand .name small{display:block; font-weight:500; font-size:11px; color:var(--ink-low); letter-spacing:.02em;}
+
+  .mode-toggle{
+    display:flex; align-items:center; gap:2px;
+    border:1px solid var(--line-strong); border-radius:var(--radius-pill);
+    padding:4px; background:rgba(128,128,128,.04);
+  }
+  .mode-toggle button{
+    border:none; background:transparent; color:var(--ink-mid);
+    font-size:13px; font-weight:600; padding:8px 14px; border-radius:var(--radius-pill);
+    display:flex; align-items:center; gap:6px; transition:.2s;
+  }
+  .mode-toggle button.active{ background:var(--gold); color:var(--on-gold); }
+  .mode-toggle button:not(.active):hover{ color:var(--ink-hi); }
+
+  .top-actions{display:flex; align-items:center; gap:10px;}
+  .status-pill{
+    display:flex; align-items:center; gap:7px;
+    border:1px solid var(--line); border-radius:var(--radius-pill);
+    padding:8px 13px; font-size:12.5px; font-weight:600; color:var(--ink-mid);
+  }
+  .status-dot{width:8px; height:8px; border-radius:50%; background:var(--red); box-shadow:0 0 0 3px rgba(192,86,61,.18);}
+  .status-dot.on{background:var(--green); box-shadow:0 0 0 3px rgba(61,220,151,.18);}
+  .icon-btn{
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--line-strong); background:rgba(128,128,128,.04); color:var(--gold-soft);
+    display:grid; place-items:center; transition:.2s; font-size:15px;
+  }
+  .icon-btn:hover{ background:var(--gold-dim); border-color:var(--gold); }
+
+  .hero{padding:38px 22px 26px;}
+  .eyebrow{
+    font-family:var(--ff-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--gold-soft); margin-bottom:12px; display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:''; width:16px; height:1px; background:var(--gold-soft);}
+  .hero h1{
+    font-weight:800; font-size:clamp(28px,4.4vw,42px);
+    line-height:1.16; max-width:760px; letter-spacing:-.01em;
+  }
+  .hero h1 span{color:var(--gold);}
+
+  .hero-actions{margin-top:20px;}
+  .btn-qr{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--line-strong); background:var(--gold-dim); color:var(--ink-hi);
+    padding:11px 18px; border-radius:var(--radius-pill); font-weight:600; font-size:13.5px; transition:.2s;
+  }
+  .btn-qr:hover{ border-color:var(--gold); background:var(--gold-dim); }
+
+  .stat-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;}
+  .stat-chip{
+    border:1px solid var(--line); border-radius:14px; padding:12px 16px; min-width:120px;
+    background:var(--panel);
+  }
+  .stat-chip .n{font-family:var(--ff-mono); font-size:20px; font-weight:600; color:var(--gold-soft);}
+  .stat-chip .l{font-size:11.5px; color:var(--ink-low); margin-top:2px;}
+
+  .controls{ padding:6px 22px 18px; position:sticky; top:70px; z-index:30;
+    background:linear-gradient(var(--bg-app) 82%, transparent); }
+  .search-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;}
+  .search-box{
+    flex:1 1 240px; display:flex; align-items:center; gap:9px;
+    border:1px solid var(--line-strong); border-radius:14px; padding:11px 14px;
+    background:var(--panel);
+  }
+  .search-box svg{flex-shrink:0; opacity:.6;}
+  .search-box input{flex:1; background:none; border:none; outline:none; color:var(--ink-hi); font-size:14px;}
+  .search-box input::placeholder{color:var(--ink-low);}
+  select.type-filter{
+    border:1px solid var(--line-strong); border-radius:14px; padding:11px 14px;
+    background:var(--panel); color:var(--ink-hi); font-size:13.5px; font-weight:500; outline:none;
+  }
+  .tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin;}
+  .tabs::-webkit-scrollbar{height:5px;}
+  .tabs::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:3px;}
+  .tab{
+    flex-shrink:0; border:1px solid var(--line); border-radius:var(--radius-pill);
+    padding:9px 16px; font-size:13px; font-weight:600; color:var(--ink-mid); white-space:nowrap; transition:.2s;
+    background:var(--panel);
+  }
+  .tab.active{background:var(--gold); border-color:var(--gold); color:var(--on-gold);}
+  .tab:not(.active):hover{border-color:var(--line-strong); color:var(--ink-hi);}
+
+  .grid-wrap{padding:10px 22px 100px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:16px;}
+  .app-shell.mode-mobile .grid{grid-template-columns:1fr;}
+  .card{
+    position:relative; border:1px solid var(--line); border-radius:var(--radius-card);
+    background:linear-gradient(160deg, var(--card-1), var(--card-2));
+    padding:18px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:12px;
+    transition:transform .2s, border-color .2s;
+  }
+  .card:hover{ transform:translateY(-3px); border-color:var(--line-strong); }
+  .card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px;}
+  .badge{
+    font-family:var(--ff-mono); font-size:10.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+    padding:5px 9px; border-radius:7px; border:1px solid var(--line-strong); color:var(--gold-soft);
+  }
+  .type-icon{
+    width:34px; height:34px; border-radius:10px; display:grid; place-items:center; flex-shrink:0;
+    background:var(--gold-dim); color:var(--gold-soft); border:1px solid var(--line);
+  }
+  .card h3{font-size:16.5px; font-weight:700; line-height:1.3;}
+  .card .author{font-size:12.5px; color:var(--ink-low);}
+  .card .cat{font-size:11.5px; color:var(--ink-mid); border-top:1px dashed var(--line); padding-top:10px;}
+  .card-stats{display:flex; gap:14px; font-size:11.5px; color:var(--ink-low); font-family:var(--ff-mono);}
+  .card-stats span{display:flex; align-items:center; gap:5px;}
+  .card-actions{display:flex; gap:8px; margin-top:2px;}
+  .btn-open{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
+    background:var(--gold); color:var(--on-gold); border:none; border-radius:11px;
+    padding:10px 12px; font-weight:700; font-size:13px; transition:.2s;
+  }
+  .btn-open:hover{background:var(--gold-soft);}
+  .admin-mini{
+    width:38px; border-radius:11px; border:1px solid var(--line-strong); background:transparent; color:var(--ink-mid);
+    display:grid; place-items:center; transition:.2s;
+  }
+  .admin-mini:hover{border-color:var(--red); color:var(--red);}
+  .empty-state{
+    grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--ink-low);
+    border:1px dashed var(--line); border-radius:18px;
+  }
+  .empty-state h4{color:var(--ink-hi); margin-bottom:6px; font-size:16px;}
+
+  .fab{
+    position:fixed; right:26px; bottom:26px; z-index:50;
+    display:flex; align-items:center; gap:9px;
+    background:var(--gold); color:var(--on-gold); border:none;
+    border-radius:var(--radius-pill); padding:15px 20px; font-weight:700; font-size:14px;
+    box-shadow:0 14px 34px -10px rgba(200,145,47,.5);
+  }
+
+  .overlay{
+    position:fixed; inset:0; background:var(--overlay-bg); backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    width:100%; max-width:420px; background:var(--panel); border:1px solid var(--line-strong);
+    border-radius:20px; padding:24px; max-height:88vh; overflow-y:auto;
+  }
+  .modal h3{font-size:18px; margin-bottom:4px;}
+  .modal .sub{font-size:12.5px; color:var(--ink-low); margin-bottom:18px;}
+  .field{margin-bottom:13px;}
+  .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-mid); margin-bottom:6px;}
+  .field input, .field select{
+    width:100%; border:1px solid var(--line-strong); border-radius:10px; padding:10px 12px;
+    background:var(--input-bg); color:var(--ink-hi); font-size:14px; outline:none;
+  }
+  .field input:focus, .field select:focus{border-color:var(--gold);}
+  .field .hint{font-size:11px; color:var(--ink-low); margin-top:5px;}
+  .modal-actions{display:flex; gap:10px; margin-top:18px;}
+  .btn-secondary{
+    flex:1; border:1px solid var(--line-strong); background:transparent; color:var(--ink-mid);
+    border-radius:11px; padding:11px; font-weight:600; font-size:13.5px;
+  }
+  .btn-primary{
+    flex:1; border:none; background:var(--gold); color:var(--on-gold);
+    border-radius:11px; padding:11px; font-weight:700; font-size:13.5px;
+  }
+  .form-msg{font-size:12.5px; margin-top:10px; display:none;}
+  .form-msg.error{color:var(--red); display:block;}
+  .form-msg.ok{color:var(--green); display:block;}
+  .admin-badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--green);
+    border:1px solid rgba(61,220,151,.35); background:rgba(61,220,151,.08);
+    padding:5px 10px; border-radius:var(--radius-pill); margin-bottom:14px;
+  }
+
+  @media(max-width:600px){
+    .app-shell.mode-desktop{ max-width:100%; }
+    .hero{padding:28px 16px 18px;}
+    .controls, .grid-wrap{padding-left:16px; padding-right:16px;}
+    header.topbar{padding:14px 16px;}
+    .mode-toggle span.lbl{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell mode-auto" id="appShell">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">TB</div>
+      <div class="name">Thư Viện Số<small>THCS Phú Bài</small></div>
+    </div>
+
+    <div class="mode-toggle" id="modeToggle">
+      <button data-mode="desktop">🖥️ <span class="lbl">Máy tính</span></button>
+      <button data-mode="mobile">📱 <span class="lbl">Điện thoại</span></button>
+      <button data-mode="auto" class="active">✨ <span class="lbl">Tự động</span></button>
+    </div>
+
+    <div class="top-actions">
+      <div class="status-pill"><span class="status-dot" id="statusDot"></span><span id="statusLabel">Đang kết nối</span></div>
+      <button class="icon-btn" id="themeBtn" title="Đổi giao diện">🌙</button>
+      <button class="icon-btn" id="adminBtn" title="Quản trị">🔒</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Thư viện số mini · Miễn phí</div>
+    <h1>Mỗi cuốn sách,<br><span>một thế giới mở ra.</span></h1>
+    <div class="hero-actions">
+      <button class="btn-qr" id="downloadQrBtn">📥 Tải mã QR giới thiệu</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat-chip"><div class="n" id="statBooks">0</div><div class="l">Đầu sách / audio</div></div>
+      <div class="stat-chip"><div class="n" id="statViews">0</div><div class="l">Lượt xem</div></div>
+      <div class="stat-chip"><div class="n" id="statOpens">0</div><div class="l">Lượt đọc / nghe</div></div>
+    </div>
+  </section>
+
+  <section class="controls">
+    <div class="search-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên sách, tác giả...">
+      </div>
+      <select class="type-filter" id="typeFilter">
+        <option value="all">Tất cả loại</option>
+        <option value="ebook">📘 Ebook / Sách</option>
+        <option value="audio">🎧 Audio book</option>
+        <option value="comic">📗 Truyện tranh</option>
+      </select>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-cat="all">Tất cả</button>
+      <button class="tab" data-cat="Văn học">Văn học</button>
+      <button class="tab" data-cat="Khoa học tự nhiên">Khoa học tự nhiên</button>
+      <button class="tab" data-cat="Truyện tranh - Thiếu nhi">Truyện tranh · Thiếu nhi</button>
+      <button class="tab" data-cat="Kỹ năng sống">Kỹ năng sống</button>
+      <button class="tab" data-cat="Radio truyện">Radio truyện</button>
+      <button class="tab" data-cat="Tài liệu học tập">Tài liệu học tập</button>
+    </div>
+  </section>
+
+  <section class="grid-wrap">
+    <div class="grid" id="grid">
+      <div class="empty-state"><h4>Đang tải thư viện…</h4><p>Vui lòng chờ trong giây lát.</p></div>
+    </div>
+  </section>
+
+  <button class="fab" id="fabAdd" style="display:none;">＋ Thêm sách mới</button>
+</div>
+
+<!-- ================= Modal: Đăng nhập quản trị ================= -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <h3>🔒 Đăng nhập quản trị</h3>
+    <div class="sub">Dành cho thủ thư / giáo viên phụ trách thư viện số.</div>
+    <div class="field"><label>Mật khẩu quản trị</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+    <div class="form-msg" id="loginMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="loginCancel">Đóng</button>
+      <button class="btn-primary" id="loginSubmit">Đăng nhập</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= Modal: Thêm / sửa sách ================= -->
+<div class="overlay" id="bookOverlay">
+  <div class="modal">
+    <span class="admin-badge">🟢 Chế độ quản trị</span>
+    <h3 id="bookModalTitle">Thêm sách mới</h3>
+    <div class="sub">Dán link Google Drive đã chia sẻ ở chế độ "Bất kỳ ai có đường liên kết".</div>
+    <div class="field"><label>Tên sách / audio *</label><input type="text" id="fTitle" placeholder="VD: Nhà Giả Kim"></div>
+    <div class="field"><label>Tác giả</label><input type="text" id="fAuthor" placeholder="VD: Paulo Coelho"></div>
+    <div class="field"><label>Thể loại *</label>
+      <select id="fCategory">
+        <option>Văn học</option>
+        <option>Khoa học tự nhiên</option>
+        <option>Truyện tranh - Thiếu nhi</option>
+        <option>Kỹ năng sống</option>
+        <option>Radio truyện</option>
+        <option>Tài liệu học tập</option>
+      </select>
+    </div>
+    <div class="field"><label>Định dạng *</label>
+      <select id="fType">
+        <option value="ebook">📘 Ebook / Sách (PDF, EPUB)</option>
+        <option value="audio">🎧 Audio book</option>
+        <option value="comic">📗 Truyện tranh</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Link Google Drive *</label>
+      <input type="url" id="fLink" placeholder="https://drive.google.com/...">
+      <div class="hint">Nhớ để chế độ chia sẻ công khai — file vẫn nằm trên Drive, web chỉ lưu đường link để tiết kiệm dung lượng.</div>
+    </div>
+    <div class="form-msg" id="bookMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="bookCancel">Huỷ</button>
+      <button class="btn-primary" id="bookSubmit">Lưu sách</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* =====================================================================
+   1) CẤU HÌNH — THAY BẰNG THÔNG TIN CỦA BẠN
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "REPLACE_ME",
+  authDomain: "REPLACE_ME.firebaseapp.com",
+  databaseURL: "https://REPLACE_ME-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "REPLACE_ME",
+  storageBucket: "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId: "REPLACE_ME"
+};
+// Mật khẩu quản trị — đổi thành mật khẩu riêng của bạn trước khi đăng web công khai.
+// LƯU Ý: mật khẩu này nằm ngay trong mã nguồn (ai xem "View Page Source" cũng thấy được),
+// nên chỉ phù hợp cho dự án học tập / nội bộ, không dùng để bảo vệ dữ liệu quan trọng.
+const ADMIN_PASSWORD = "phubai2026";
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const booksRef = db.ref("books");
+
+/* =====================================================================
+   2) TRẠNG THÁI KẾT NỐI
+   ===================================================================== */
+db.ref(".info/connected").on("value", (snap) => {
+  const dot = document.getElementById("statusDot");
+  const label = document.getElementById("statusLabel");
+  if (snap.val() === true) {
+    dot.classList.add("on"); label.textContent = "Trực tuyến";
+  } else {
+    dot.classList.remove("on"); label.textContent = "Ngoại tuyến";
+  }
+});
+
+/* =====================================================================
+   3) GIAO DIỆN SÁNG / TỐI — mặc định sáng
+   ===================================================================== */
+const themeBtn = document.getElementById("themeBtn");
+function setTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+  localStorage.setItem("tvs_theme", theme);
+}
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  setTheme(cur === "dark" ? "light" : "dark");
+});
+setTheme(localStorage.getItem("tvs_theme") || "light");
+
+/* =====================================================================
+   4) CHẾ ĐỘ HIỂN THỊ: Máy tính / Điện thoại / Tự động
+   ===================================================================== */
+const appShell = document.getElementById("appShell");
+const modeToggle = document.getElementById("modeToggle");
+function setMode(mode){
+  appShell.classList.remove("mode-desktop","mode-mobile","mode-auto");
+  appShell.classList.add("mode-" + mode);
+  [...modeToggle.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b.dataset.mode === mode));
+  localStorage.setItem("tvs_view_mode", mode);
+}
+modeToggle.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-mode]");
+  if (btn) setMode(btn.dataset.mode);
+});
+setMode(localStorage.getItem("tvs_view_mode") || "auto");
+
+/* =====================================================================
+   5) DỮ LIỆU SÁCH — đọc realtime từ Firebase
+   ===================================================================== */
+let allBooks = [];
+let activeCat = "all";
+let activeType = "all";
+let searchTerm = "";
+let isAdmin = sessionStorage.getItem("tvs_admin") === "1";
+
+booksRef.on("value", (snap) => {
+  const val = snap.val() || {};
+  allBooks = Object.entries(val).map(([id, b]) => ({ id, ...b }));
+  renderStats();
+  renderGrid();
+});
+
+function renderStats(){
+  document.getElementById("statBooks").textContent = allBooks.length;
+  document.getElementById("statViews").textContent = allBooks.reduce((s,b)=>s+(b.views||0),0);
+  document.getElementById("statOpens").textContent = allBooks.reduce((s,b)=>s+(b.opens||0),0);
+}
+
+const typeMeta = {
+  ebook: { icon:"📘", label:"Ebook", action:"Đọc ngay" },
+  audio: { icon:"🎧", label:"Audio", action:"Nghe ngay" },
+  comic: { icon:"📗", label:"Truyện tranh", action:"Xem ngay" }
+};
+
+function renderGrid(){
+  const grid = document.getElementById("grid");
+  const q = searchTerm.trim().toLowerCase();
+  const filtered = allBooks.filter(b => {
+    if (activeCat !== "all" && b.category !== activeCat) return false;
+    if (activeType !== "all" && b.type !== activeType) return false;
+    if (q && !(`${b.title} ${b.author||""}`.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  if (filtered.length === 0){
+    grid.innerHTML = `<div class="empty-state"><h4>Chưa có sách nào ở đây</h4><p>${isAdmin ? 'Bấm "Thêm sách mới" để bắt đầu xây dựng thư viện.' : 'Thử đổi bộ lọc hoặc quay lại sau nhé.'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(b => {
+    const meta = typeMeta[b.type] || typeMeta.ebook;
+    return `
+    <div class="card">
+      <div class="card-top">
+        <div class="type-icon">${meta.icon}</div>
+        <span class="badge">${meta.label}</span>
+      </div>
+      <div>
+        <h3>${escapeHtml(b.title)}</h3>
+        ${b.author ? `<div class="author">${escapeHtml(b.author)}</div>` : ""}
+      </div>
+      <div class="cat">${escapeHtml(b.category)}</div>
+      <div class="card-stats">
+        <span>👁 ${b.views||0} lượt xem</span>
+        <span>${meta.icon} ${b.opens||0} lượt mở</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn-open" data-open="${b.id}">${meta.action} ↗</button>
+        ${isAdmin ? `<button class="admin-mini" data-del="${b.id}" title="Xoá">🗑️</button>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function escapeHtml(str){
+  return (str||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+let viewedSession = new Set(JSON.parse(sessionStorage.getItem("tvs_viewed")||"[]"));
+function markViewedOnce(id){
+  if (viewedSession.has(id)) return;
+  viewedSession.add(id);
+  sessionStorage.setItem("tvs_viewed", JSON.stringify([...viewedSession]));
+  booksRef.child(id).child("views").transaction(v => (v||0)+1);
+}
+
+document.getElementById("grid").addEventListener("click", (e) => {
+  const openBtn = e.target.closest("[data-open]");
+  const delBtn = e.target.closest("[data-del]");
+  if (openBtn){
+    const id = openBtn.dataset.open;
+    const book = allBooks.find(b => b.id === id);
+    if (book){
+      booksRef.child(id).child("opens").transaction(v => (v||0)+1);
+      window.open(book.driveLink, "_blank", "noopener");
+    }
+  }
+  if (delBtn){
+    const id = delBtn.dataset.del;
+    if (confirm("Xoá sách này khỏi thư viện?")) booksRef.child(id).remove();
+  }
+});
+
+const gridObserver = new MutationObserver(() => {
+  document.querySelectorAll("[data-open]").forEach(btn => markViewedOnce(btn.dataset.open));
+});
+gridObserver.observe(document.getElementById("grid"), { childList:true });
+
+/* =====================================================================
+   6) TÌM KIẾM + BỘ LỌC
+   ===================================================================== */
+document.getElementById("searchInput").addEventListener("input", (e) => { searchTerm = e.target.value; renderGrid(); });
+document.getElementById("typeFilter").addEventListener("change", (e) => { activeType = e.target.value; renderGrid(); });
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const tab = e.target.closest(".tab");
+  if (!tab) return;
+  [...document.querySelectorAll(".tab")].forEach(t => t.classList.remove("active"));
+  tab.classList.add("active");
+  activeCat = tab.dataset.cat;
+  renderGrid();
+});
+
+/* =====================================================================
+   7) ĐĂNG NHẬP QUẢN TRỊ (mật khẩu cố định trong file, không dùng Firebase Auth)
+   ===================================================================== */
+const loginOverlay = document.getElementById("loginOverlay");
+
+function updateAdminUI(){
+  document.getElementById("adminBtn").textContent = isAdmin ? "🔓" : "🔒";
+  document.getElementById("adminBtn").title = isAdmin ? "Đăng xuất quản trị" : "Đăng nhập quản trị";
+  document.getElementById("fabAdd").style.display = isAdmin ? "flex" : "none";
+  renderGrid();
+}
+
+document.getElementById("adminBtn").addEventListener("click", () => {
+  if (isAdmin) { isAdmin = false; sessionStorage.removeItem("tvs_admin"); updateAdminUI(); return; }
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginMsg").className = "form-msg";
+  loginOverlay.classList.add("open");
+});
+document.getElementById("loginCancel").addEventListener("click", () => loginOverlay.classList.remove("open"));
+
+document.getElementById("loginSubmit").addEventListener("click", () => {
+  const pass = document.getElementById("loginPass").value;
+  const msg = document.getElementById("loginMsg");
+  msg.className = "form-msg";
+  if (pass === ADMIN_PASSWORD){
+    isAdmin = true;
+    sessionStorage.setItem("tvs_admin", "1");
+    loginOverlay.classList.remove("open");
+    updateAdminUI();
+  } else {
+    msg.textContent = "Sai mật khẩu."; msg.classList.add("error");
+  }
+});
+document.getElementById("loginPass").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("loginSubmit").click();
+});
+
+updateAdminUI();
+
+/* =====================================================================
+   8) THÊM SÁCH MỚI
+   ===================================================================== */
+const bookOverlay = document.getElementById("bookOverlay");
+document.getElementById("fabAdd").addEventListener("click", () => {
+  ["fTitle","fAuthor","fLink"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("bookMsg").className = "form-msg";
+  bookOverlay.classList.add("open");
+});
+document.getElementById("bookCancel").addEventListener("click", () => bookOverlay.classList.remove("open"));
+
+document.getElementById("bookSubmit").addEventListener("click", () => {
+  const title = document.getElementById("fTitle").value.trim();
+  const author = document.getElementById("fAuthor").value.trim();
+  const category = document.getElementById("fCategory").value;
+  const type = document.getElementById("fType").value;
+  const link = document.getElementById("fLink").value.trim();
+  const msg = document.getElementById("bookMsg");
+  msg.className = "form-msg";
+
+  if (!title || !link){
+    msg.textContent = "Vui lòng nhập tên sách và link Google Drive."; msg.classList.add("error"); return;
+  }
+  if (!link.includes("drive.google.com")){
+    msg.textContent = "Link phải là link Google Drive hợp lệ."; msg.classList.add("error"); return;
+  }
+
+  booksRef.push({
+    title, author, category, type, driveLink: link,
+    views:0, opens:0, addedAt: Date.now(), addedBy: "admin"
+  }).then(() => {
+    msg.textContent = "Đã thêm sách thành công!"; msg.classList.add("ok");
+    setTimeout(() => bookOverlay.classList.remove("open"), 700);
+  }).catch(err => { msg.textContent = "Lỗi: " + err.message; msg.classList.add("error"); });
+});
+
+/* =====================================================================
+   9) TẢI MÃ QR GIỚI THIỆU (ảnh PNG để in dán ở lớp học)
+   ===================================================================== */
+const qrHidden = document.createElement("div");
+qrHidden.style.position = "absolute";
+qrHidden.style.left = "-9999px";
+document.body.appendChild(qrHidden);
+new QRCode(qrHidden, {
+  text: window.location.href,
+  width: 320, height: 320,
+  colorDark: "#171b2e", colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.M
+});
+
+document.getElementById("downloadQrBtn").addEventListener("click", () => {
+  document.fonts.ready.then(() => setTimeout(buildAndDownloadPoster, 150));
+});
+
+function buildAndDownloadPoster(){
+  const qrCanvas = qrHidden.querySelector("canvas");
+  if (!qrCanvas){ alert("Mã QR chưa sẵn sàng, vui lòng thử lại sau giây lát."); return; }
+
+  const W = 640, H = 860;
+  const poster = document.createElement("canvas");
+  poster.width = W; poster.height = H;
+  const ctx = poster.getContext("2d");
+
+  ctx.fillStyle = "#faf7ef"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#c8912f"; ctx.lineWidth = 3; ctx.strokeRect(20, 20, W - 40, H - 40);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#171b2e";
+  ctx.font = "800 34px 'Be Vietnam Pro'";
+  ctx.fillText("THƯ VIỆN SỐ", W / 2, 105);
+  ctx.fillStyle = "#a9741d";
+  ctx.font = "700 22px 'Be Vietnam Pro'";
+  ctx.fillText("THCS PHÚ BÀI", W / 2, 142);
+
+  const qrSize = 340;
+  ctx.drawImage(qrCanvas, (W - qrSize) / 2, 195, qrSize, qrSize);
+
+  ctx.fillStyle = "#171b2e";
+  ctx.font = "600 23px 'Be Vietnam Pro'";
+  ctx.fillText("Quét mã để mở thư viện số", W / 2, 592);
+  ctx.fillStyle = "#525873";
+  ctx.font = "400 16px 'Be Vietnam Pro'";
+  ctx.fillText("Đọc ebook · Nghe audio book · Xem truyện tranh", W / 2, 624);
+  ctx.fillStyle = "#878da8";
+  ctx.font = "500 14px 'JetBrains Mono'";
+  ctx.fillText(window.location.hostname || "thu-vien-so", W / 2, 662);
+
+  const link = document.createElement("a");
+  link.download = "qr-thu-vien-so-phu-bai.png";
+  link.href = poster.toDataURL("image/png");
+  link.click();
+}
+</script>
+</body>
+</html>
