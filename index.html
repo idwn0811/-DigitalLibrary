@@ -65,19 +65,20 @@
   button{font-family:inherit; cursor:pointer;}
   ::selection{background:var(--gold); color:var(--on-gold);}
 
-  .app-shell{ min-height:100vh; transition:max-width .35s ease, padding .35s ease; }
-  .app-shell.mode-desktop{ max-width:1240px; margin:0 auto; }
+  /* Máy tính & Tự động = full màn hình ngang; Điện thoại = khung hẹp mô phỏng */
+  .app-shell{ min-height:100vh; width:100%; transition:max-width .35s ease; }
+  .app-shell.mode-desktop{ max-width:100%; margin:0; }
+  .app-shell.mode-auto{ max-width:100%; margin:0; }
   .app-shell.mode-mobile{
     max-width:430px; margin:28px auto; border:1px solid var(--line);
     border-radius:34px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,.35);
     background:var(--panel);
   }
-  .app-shell.mode-auto{ max-width:1240px; margin:0 auto; }
 
   header.topbar{
-    position:sticky; top:0; z-index:40;
+    position:sticky; top:0; z-index:40; width:100%;
     display:flex; align-items:center; justify-content:space-between;
-    gap:12px; padding:16px 22px;
+    gap:12px; padding:16px 30px;
     background:var(--panel-translucent); backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line);
   }
@@ -119,25 +120,17 @@
   }
   .icon-btn:hover{ background:var(--gold-dim); border-color:var(--gold); }
 
-  .hero{padding:38px 22px 26px;}
+  .hero{padding:38px 30px 26px;}
   .eyebrow{
     font-family:var(--ff-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
     color:var(--gold-soft); margin-bottom:12px; display:flex; align-items:center; gap:8px;
   }
   .eyebrow::before{content:''; width:16px; height:1px; background:var(--gold-soft);}
   .hero h1{
-    font-weight:800; font-size:clamp(28px,4.4vw,42px);
-    line-height:1.16; max-width:760px; letter-spacing:-.01em;
+    font-weight:800; font-size:clamp(28px,4.4vw,44px);
+    line-height:1.16; max-width:900px; letter-spacing:-.01em;
   }
   .hero h1 span{color:var(--gold);}
-
-  .hero-actions{margin-top:20px;}
-  .btn-qr{
-    display:inline-flex; align-items:center; gap:8px;
-    border:1px solid var(--line-strong); background:var(--gold-dim); color:var(--ink-hi);
-    padding:11px 18px; border-radius:var(--radius-pill); font-weight:600; font-size:13.5px; transition:.2s;
-  }
-  .btn-qr:hover{ border-color:var(--gold); background:var(--gold-dim); }
 
   .stat-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:22px;}
   .stat-chip{
@@ -147,7 +140,7 @@
   .stat-chip .n{font-family:var(--ff-mono); font-size:20px; font-weight:600; color:var(--gold-soft);}
   .stat-chip .l{font-size:11.5px; color:var(--ink-low); margin-top:2px;}
 
-  .controls{ padding:6px 22px 18px; position:sticky; top:70px; z-index:30;
+  .controls{ padding:6px 30px 18px; position:sticky; top:70px; z-index:30;
     background:linear-gradient(var(--bg-app) 82%, transparent); }
   .search-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;}
   .search-box{
@@ -173,7 +166,7 @@
   .tab.active{background:var(--gold); border-color:var(--gold); color:var(--on-gold);}
   .tab:not(.active):hover{border-color:var(--line-strong); color:var(--ink-hi);}
 
-  .grid-wrap{padding:10px 22px 100px;}
+  .grid-wrap{padding:10px 30px 40px;}
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:16px;}
   .app-shell.mode-mobile .grid{grid-template-columns:1fr;}
   .card{
@@ -206,7 +199,7 @@
   .btn-open:hover{background:var(--gold-soft);}
   .admin-mini{
     width:38px; border-radius:11px; border:1px solid var(--line-strong); background:transparent; color:var(--ink-mid);
-    display:grid; place-items:center; transition:.2s;
+    display:grid; place-items:center; transition:.2s; flex-shrink:0;
   }
   .admin-mini:hover{border-color:var(--red); color:var(--red);}
   .empty-state{
@@ -216,12 +209,23 @@
   .empty-state h4{color:var(--ink-hi); margin-bottom:6px; font-size:16px;}
 
   .fab{
-    position:fixed; right:26px; bottom:26px; z-index:50;
+    position:fixed; right:26px; z-index:50;
     display:flex; align-items:center; gap:9px;
-    background:var(--gold); color:var(--on-gold); border:none;
-    border-radius:var(--radius-pill); padding:15px 20px; font-weight:700; font-size:14px;
-    box-shadow:0 14px 34px -10px rgba(200,145,47,.5);
+    border:none; border-radius:var(--radius-pill); padding:15px 20px; font-weight:700; font-size:14px;
   }
+  .fab.fab-add{ bottom:26px; background:var(--gold); color:var(--on-gold); box-shadow:0 14px 34px -10px rgba(200,145,47,.5); }
+  .fab.fab-cat{ bottom:96px; background:var(--panel); color:var(--ink-hi); border:1px solid var(--line-strong); box-shadow:var(--shadow-card); }
+
+  /* Mã QR giới thiệu — hiển thị ngay trên trang, xem/lưu trực tiếp */
+  .qr-section{ padding:10px 30px 60px; }
+  .qr-section-inner{
+    display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+    border:1px solid var(--line); border-radius:var(--radius-card); padding:20px;
+    background:var(--panel);
+  }
+  .qr-poster-host canvas{ display:block; width:150px; height:auto; border-radius:10px; border:1px solid var(--line); }
+  .qr-section-text h4{font-size:14.5px; margin-bottom:5px;}
+  .qr-section-text p{font-size:12.5px; color:var(--ink-low); max-width:440px; line-height:1.6;}
 
   .overlay{
     position:fixed; inset:0; background:var(--overlay-bg); backdrop-filter:blur(4px);
@@ -229,7 +233,7 @@
   }
   .overlay.open{display:flex;}
   .modal{
-    width:100%; max-width:420px; background:var(--panel); border:1px solid var(--line-strong);
+    width:100%; max-width:440px; background:var(--panel); border:1px solid var(--line-strong);
     border-radius:20px; padding:24px; max-height:88vh; overflow-y:auto;
   }
   .modal h3{font-size:18px; margin-bottom:4px;}
@@ -259,11 +263,14 @@
     border:1px solid rgba(61,220,151,.35); background:rgba(61,220,151,.08);
     padding:5px 10px; border-radius:var(--radius-pill); margin-bottom:14px;
   }
+  .cat-row{
+    display:flex; align-items:center; justify-content:space-between;
+    border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:13.5px;
+  }
 
   @media(max-width:600px){
-    .app-shell.mode-desktop{ max-width:100%; }
     .hero{padding:28px 16px 18px;}
-    .controls, .grid-wrap{padding-left:16px; padding-right:16px;}
+    .controls, .grid-wrap, .qr-section{padding-left:16px; padding-right:16px;}
     header.topbar{padding:14px 16px;}
     .mode-toggle span.lbl{display:none;}
   }
@@ -295,9 +302,6 @@
   <section class="hero">
     <div class="eyebrow">Thư viện số mini · Miễn phí</div>
     <h1>Mỗi cuốn sách,<br><span>một thế giới mở ra.</span></h1>
-    <div class="hero-actions">
-      <button class="btn-qr" id="downloadQrBtn">📥 Tải mã QR giới thiệu</button>
-    </div>
     <div class="stat-row">
       <div class="stat-chip"><div class="n" id="statBooks">0</div><div class="l">Đầu sách / audio</div></div>
       <div class="stat-chip"><div class="n" id="statViews">0</div><div class="l">Lượt xem</div></div>
@@ -320,12 +324,6 @@
     </div>
     <div class="tabs" id="tabs">
       <button class="tab active" data-cat="all">Tất cả</button>
-      <button class="tab" data-cat="Văn học">Văn học</button>
-      <button class="tab" data-cat="Khoa học tự nhiên">Khoa học tự nhiên</button>
-      <button class="tab" data-cat="Truyện tranh - Thiếu nhi">Truyện tranh · Thiếu nhi</button>
-      <button class="tab" data-cat="Kỹ năng sống">Kỹ năng sống</button>
-      <button class="tab" data-cat="Radio truyện">Radio truyện</button>
-      <button class="tab" data-cat="Tài liệu học tập">Tài liệu học tập</button>
     </div>
   </section>
 
@@ -335,7 +333,18 @@
     </div>
   </section>
 
-  <button class="fab" id="fabAdd" style="display:none;">＋ Thêm sách mới</button>
+  <section class="qr-section">
+    <div class="qr-section-inner">
+      <div class="qr-poster-host" id="qrPosterHost"></div>
+      <div class="qr-section-text">
+        <h4>Mã QR giới thiệu thư viện</h4>
+        <p>Bấm chuột phải vào ảnh (hoặc nhấn giữ trên điện thoại) để lưu về máy, in ra dán tại lớp học.</p>
+      </div>
+    </div>
+  </section>
+
+  <button class="fab fab-cat" id="fabCat" style="display:none;">🏷️ Thể loại</button>
+  <button class="fab fab-add" id="fabAdd" style="display:none;">＋ Thêm sách mới</button>
 </div>
 
 <!-- ================= Modal: Đăng nhập quản trị ================= -->
@@ -361,14 +370,7 @@
     <div class="field"><label>Tên sách / audio *</label><input type="text" id="fTitle" placeholder="VD: Nhà Giả Kim"></div>
     <div class="field"><label>Tác giả</label><input type="text" id="fAuthor" placeholder="VD: Paulo Coelho"></div>
     <div class="field"><label>Thể loại *</label>
-      <select id="fCategory">
-        <option>Văn học</option>
-        <option>Khoa học tự nhiên</option>
-        <option>Truyện tranh - Thiếu nhi</option>
-        <option>Kỹ năng sống</option>
-        <option>Radio truyện</option>
-        <option>Tài liệu học tập</option>
-      </select>
+      <select id="fCategory"></select>
     </div>
     <div class="field"><label>Định dạng *</label>
       <select id="fType">
@@ -390,28 +392,54 @@
   </div>
 </div>
 
+<!-- ================= Modal: Quản lý thể loại ================= -->
+<div class="overlay" id="catOverlay">
+  <div class="modal">
+    <span class="admin-badge">🟢 Chế độ quản trị</span>
+    <h3>Quản lý thể loại</h3>
+    <div class="sub">Thêm hoặc xoá thể loại sách hiển thị trên trang.</div>
+    <div class="field">
+      <label>Thêm thể loại mới</label>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="newCatName" placeholder="VD: Truyện cổ tích" style="flex:1;">
+        <button class="btn-primary" id="addCatBtn" style="flex:0 0 auto; padding:10px 16px;">Thêm</button>
+      </div>
+    </div>
+    <div id="catList" style="display:flex; flex-direction:column; gap:8px; margin-top:14px;"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="catCloseBtn" style="flex:1;">Đóng</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* =====================================================================
-   1) CẤU HÌNH — THAY BẰNG THÔNG TIN CỦA BẠN
+   1) CẤU HÌNH FIREBASE (đã điền theo project digitallibrary-af922)
+   LƯU Ý: databaseURL bên dưới được đoán theo khu vực Singapore
+   (asia-southeast1) như hướng dẫn trước đó. Vào Firebase Console →
+   Realtime Database, copy đúng URL hiển thị ở đầu trang và thay lại
+   nếu bạn chọn khu vực khác lúc tạo database.
    ===================================================================== */
 const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  databaseURL: "https://REPLACE_ME-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME"
+  apiKey: "AIzaSyCl3-xaXaeqxElke7A3nWpb3GYNo7IHUaA",
+  authDomain: "digitallibrary-af922.firebaseapp.com",
+  databaseURL: "https://digitallibrary-af922-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "digitallibrary-af922",
+  storageBucket: "digitallibrary-af922.firebasestorage.app",
+  messagingSenderId: "1056689777785",
+  appId: "1:1056689777785:web:6c96d2bf55cd7a6e17b8a8"
 };
-// Mật khẩu quản trị — đổi thành mật khẩu riêng của bạn trước khi đăng web công khai.
-// LƯU Ý: mật khẩu này nằm ngay trong mã nguồn (ai xem "View Page Source" cũng thấy được),
-// nên chỉ phù hợp cho dự án học tập / nội bộ, không dùng để bảo vệ dữ liệu quan trọng.
+// Mật khẩu quản trị — đổi thành mật khẩu riêng trước khi dùng thật.
 const ADMIN_PASSWORD = "phubai2026";
+// Link mã QR trỏ tới — mặc định là trang web đang chạy trên GitHub Pages.
+const QR_TARGET_URL = "https://idwn0811.github.io/-DigitalLibrary/";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const booksRef = db.ref("books");
+const categoriesRef = db.ref("categories");
+const DEFAULT_CATEGORIES = ["Văn học","Khoa học tự nhiên","Truyện tranh - Thiếu nhi","Kỹ năng sống","Radio truyện","Tài liệu học tập"];
 
 /* =====================================================================
    2) TRẠNG THÁI KẾT NỐI
@@ -442,7 +470,7 @@ themeBtn.addEventListener("click", () => {
 setTheme(localStorage.getItem("tvs_theme") || "light");
 
 /* =====================================================================
-   4) CHẾ ĐỘ HIỂN THỊ: Máy tính / Điện thoại / Tự động
+   4) CHẾ ĐỘ HIỂN THỊ: Máy tính / Điện thoại / Tự động (cả 2 chế độ đầu đều full màn hình ngang)
    ===================================================================== */
 const appShell = document.getElementById("appShell");
 const modeToggle = document.getElementById("modeToggle");
@@ -459,7 +487,75 @@ modeToggle.addEventListener("click", (e) => {
 setMode(localStorage.getItem("tvs_view_mode") || "auto");
 
 /* =====================================================================
-   5) DỮ LIỆU SÁCH — đọc realtime từ Firebase
+   5) THỂ LOẠI — quản trị có thể thêm / xoá
+   ===================================================================== */
+let categories = [];
+
+categoriesRef.once("value").then(snap => {
+  if (!snap.exists()){
+    const seed = {};
+    DEFAULT_CATEGORIES.forEach((name, i) => { seed["c" + (i + 1)] = name; });
+    categoriesRef.set(seed);
+  }
+});
+
+categoriesRef.on("value", (snap) => {
+  const val = snap.val() || {};
+  categories = Object.entries(val).map(([id, name]) => ({ id, name }));
+  renderTabs();
+  renderCategorySelect();
+  renderCategoryManager();
+  renderGrid();
+});
+
+function renderTabs(){
+  const tabsEl = document.getElementById("tabs");
+  if (activeCat !== "all" && !categories.some(c => c.name === activeCat)) activeCat = "all";
+  let html = `<button class="tab${activeCat === "all" ? " active" : ""}" data-cat="all">Tất cả</button>`;
+  categories.forEach(c => {
+    html += `<button class="tab${activeCat === c.name ? " active" : ""}" data-cat="${escapeHtml(c.name)}">${escapeHtml(c.name)}</button>`;
+  });
+  tabsEl.innerHTML = html;
+}
+
+function renderCategorySelect(){
+  const sel = document.getElementById("fCategory");
+  const current = sel.value;
+  sel.innerHTML = categories.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join("");
+  if (categories.some(c => c.name === current)) sel.value = current;
+}
+
+function renderCategoryManager(){
+  const list = document.getElementById("catList");
+  if (categories.length === 0){ list.innerHTML = `<div class="hint">Chưa có thể loại nào.</div>`; return; }
+  list.innerHTML = categories.map(c => `
+    <div class="cat-row">
+      <span>${escapeHtml(c.name)}</span>
+      <button class="admin-mini" data-delcat="${c.id}" title="Xoá">🗑️</button>
+    </div>`).join("");
+}
+
+document.getElementById("addCatBtn").addEventListener("click", () => {
+  const input = document.getElementById("newCatName");
+  const name = input.value.trim();
+  if (!name) return;
+  if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())){ alert("Thể loại này đã có rồi."); return; }
+  categoriesRef.push(name);
+  input.value = "";
+});
+document.getElementById("catList").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-delcat]");
+  if (!btn) return;
+  if (confirm("Xoá thể loại này? Sách đã gắn thể loại cũ vẫn giữ nguyên nhãn, chỉ ẩn khỏi danh sách lọc.")){
+    categoriesRef.child(btn.dataset.delcat).remove();
+  }
+});
+document.getElementById("catCloseBtn").addEventListener("click", () => document.getElementById("catOverlay").classList.remove("open"));
+document.getElementById("fabCat").addEventListener("click", () => document.getElementById("catOverlay").classList.add("open"));
+document.getElementById("newCatName").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("addCatBtn").click(); });
+
+/* =====================================================================
+   6) DỮ LIỆU SÁCH — đọc realtime từ Firebase
    ===================================================================== */
 let allBooks = [];
 let activeCat = "all";
@@ -472,6 +568,8 @@ booksRef.on("value", (snap) => {
   allBooks = Object.entries(val).map(([id, b]) => ({ id, ...b }));
   renderStats();
   renderGrid();
+}, (err) => {
+  console.error("Lỗi đọc dữ liệu Firebase:", err);
 });
 
 function renderStats(){
@@ -561,21 +659,20 @@ const gridObserver = new MutationObserver(() => {
 gridObserver.observe(document.getElementById("grid"), { childList:true });
 
 /* =====================================================================
-   6) TÌM KIẾM + BỘ LỌC
+   7) TÌM KIẾM + BỘ LỌC
    ===================================================================== */
 document.getElementById("searchInput").addEventListener("input", (e) => { searchTerm = e.target.value; renderGrid(); });
 document.getElementById("typeFilter").addEventListener("change", (e) => { activeType = e.target.value; renderGrid(); });
 document.getElementById("tabs").addEventListener("click", (e) => {
   const tab = e.target.closest(".tab");
   if (!tab) return;
-  [...document.querySelectorAll(".tab")].forEach(t => t.classList.remove("active"));
-  tab.classList.add("active");
   activeCat = tab.dataset.cat;
+  renderTabs();
   renderGrid();
 });
 
 /* =====================================================================
-   7) ĐĂNG NHẬP QUẢN TRỊ (mật khẩu cố định trong file, không dùng Firebase Auth)
+   8) ĐĂNG NHẬP QUẢN TRỊ (mật khẩu cố định trong file, không dùng Firebase Auth)
    ===================================================================== */
 const loginOverlay = document.getElementById("loginOverlay");
 
@@ -583,6 +680,7 @@ function updateAdminUI(){
   document.getElementById("adminBtn").textContent = isAdmin ? "🔓" : "🔒";
   document.getElementById("adminBtn").title = isAdmin ? "Đăng xuất quản trị" : "Đăng nhập quản trị";
   document.getElementById("fabAdd").style.display = isAdmin ? "flex" : "none";
+  document.getElementById("fabCat").style.display = isAdmin ? "flex" : "none";
   renderGrid();
 }
 
@@ -614,7 +712,7 @@ document.getElementById("loginPass").addEventListener("keydown", (e) => {
 updateAdminUI();
 
 /* =====================================================================
-   8) THÊM SÁCH MỚI
+   9) THÊM SÁCH MỚI
    ===================================================================== */
 const bookOverlay = document.getElementById("bookOverlay");
 document.getElementById("fabAdd").addEventListener("click", () => {
@@ -639,6 +737,9 @@ document.getElementById("bookSubmit").addEventListener("click", () => {
   if (!link.includes("drive.google.com")){
     msg.textContent = "Link phải là link Google Drive hợp lệ."; msg.classList.add("error"); return;
   }
+  if (!category){
+    msg.textContent = "Chưa có thể loại nào — vào \"🏷️ Thể loại\" để thêm trước."; msg.classList.add("error"); return;
+  }
 
   booksRef.push({
     title, author, category, type, driveLink: link,
@@ -650,26 +751,22 @@ document.getElementById("bookSubmit").addEventListener("click", () => {
 });
 
 /* =====================================================================
-   9) TẢI MÃ QR GIỚI THIỆU (ảnh PNG để in dán ở lớp học)
+   10) MÃ QR GIỚI THIỆU — hiển thị trực tiếp trên trang, xem/lưu tại chỗ
    ===================================================================== */
 const qrHidden = document.createElement("div");
 qrHidden.style.position = "absolute";
 qrHidden.style.left = "-9999px";
 document.body.appendChild(qrHidden);
 new QRCode(qrHidden, {
-  text: window.location.href,
+  text: QR_TARGET_URL,
   width: 320, height: 320,
   colorDark: "#171b2e", colorLight: "#ffffff",
   correctLevel: QRCode.CorrectLevel.M
 });
 
-document.getElementById("downloadQrBtn").addEventListener("click", () => {
-  document.fonts.ready.then(() => setTimeout(buildAndDownloadPoster, 150));
-});
-
-function buildAndDownloadPoster(){
+function buildPosterInline(){
   const qrCanvas = qrHidden.querySelector("canvas");
-  if (!qrCanvas){ alert("Mã QR chưa sẵn sàng, vui lòng thử lại sau giây lát."); return; }
+  if (!qrCanvas){ setTimeout(buildPosterInline, 300); return; }
 
   const W = 640, H = 860;
   const poster = document.createElement("canvas");
@@ -698,13 +795,11 @@ function buildAndDownloadPoster(){
   ctx.fillText("Đọc ebook · Nghe audio book · Xem truyện tranh", W / 2, 624);
   ctx.fillStyle = "#878da8";
   ctx.font = "500 14px 'JetBrains Mono'";
-  ctx.fillText(window.location.hostname || "thu-vien-so", W / 2, 662);
+  ctx.fillText("idwn0811.github.io", W / 2, 662);
 
-  const link = document.createElement("a");
-  link.download = "qr-thu-vien-so-phu-bai.png";
-  link.href = poster.toDataURL("image/png");
-  link.click();
+  document.getElementById("qrPosterHost").appendChild(poster);
 }
+document.fonts.ready.then(() => setTimeout(buildPosterInline, 200));
 </script>
 </body>
 </html>
