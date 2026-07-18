@@ -185,6 +185,25 @@
     width:34px; height:34px; border-radius:10px; display:grid; place-items:center; flex-shrink:0;
     background:var(--gold-dim); color:var(--gold-soft); border:1px solid var(--line);
   }
+  /* Màu riêng cho từng định dạng — dễ phân biệt trong danh sách */
+  /* Màu riêng cho từng định dạng — dễ phân biệt trong danh sách */
+  .card.type-ebook{ border-color:rgba(59,125,216,.35); border-top:3px solid #3b7dd8;
+    background: linear-gradient(rgba(59,125,216,.06), rgba(59,125,216,.06)), linear-gradient(160deg, var(--card-1), var(--card-2)); }
+  .card.type-audio{ border-color:rgba(147,51,234,.35); border-top:3px solid #9333ea;
+    background: linear-gradient(rgba(147,51,234,.06), rgba(147,51,234,.06)), linear-gradient(160deg, var(--card-1), var(--card-2)); }
+  .card.type-comic{ border-color:rgba(22,163,74,.35); border-top:3px solid #16a34a;
+    background: linear-gradient(rgba(22,163,74,.06), rgba(22,163,74,.06)), linear-gradient(160deg, var(--card-1), var(--card-2)); }
+  .card.type-video{ border-color:rgba(220,38,38,.35); border-top:3px solid #dc2626;
+    background: linear-gradient(rgba(220,38,38,.06), rgba(220,38,38,.06)), linear-gradient(160deg, var(--card-1), var(--card-2)); }
+
+  .type-icon.type-ebook{ background:rgba(59,125,216,.14); color:#3b7dd8; border-color:rgba(59,125,216,.35); }
+  .badge.type-ebook{ color:#3b7dd8; border-color:rgba(59,125,216,.4); }
+  .type-icon.type-audio{ background:rgba(147,51,234,.14); color:#9333ea; border-color:rgba(147,51,234,.35); }
+  .badge.type-audio{ color:#9333ea; border-color:rgba(147,51,234,.4); }
+  .type-icon.type-comic{ background:rgba(22,163,74,.14); color:#16a34a; border-color:rgba(22,163,74,.35); }
+  .badge.type-comic{ color:#16a34a; border-color:rgba(22,163,74,.4); }
+  .type-icon.type-video{ background:rgba(220,38,38,.14); color:#dc2626; border-color:rgba(220,38,38,.35); }
+  .badge.type-video{ color:#dc2626; border-color:rgba(220,38,38,.4); }
   .card h3{font-size:16.5px; font-weight:700; line-height:1.3;}
   .card .author{font-size:12.5px; color:var(--ink-low);}
   .card .cat{font-size:11.5px; color:var(--ink-mid); border-top:1px dashed var(--line); padding-top:10px;}
@@ -650,10 +669,10 @@ function renderGrid(){
   grid.innerHTML = filtered.map(b => {
     const meta = typeMeta[b.type] || typeMeta.ebook;
     return `
-    <div class="card">
+    <div class="card type-${b.type}">
       <div class="card-top">
-        <div class="type-icon">${meta.icon}</div>
-        <span class="badge">${meta.label}</span>
+        <div class="type-icon type-${b.type}">${meta.icon}</div>
+        <span class="badge type-${b.type}">${meta.label}</span>
       </div>
       <div>
         <h3>${escapeHtml(b.title)}</h3>
