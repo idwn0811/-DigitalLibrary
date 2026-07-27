@@ -232,8 +232,8 @@
     display:flex; align-items:center; gap:9px;
     border:none; border-radius:var(--radius-pill); padding:15px 20px; font-weight:700; font-size:14px;
   }
-  .fab.fab-add{ bottom:26px; background:var(--gold); color:var(--on-gold); box-shadow:0 14px 34px -10px rgba(200,145,47,.5); }
-  .fab.fab-cat{ bottom:96px; background:var(--panel); color:var(--ink-hi); border:1px solid var(--line-strong); box-shadow:var(--shadow-card); }
+  .fab.fab-add{ bottom:96px; background:var(--gold); color:var(--on-gold); box-shadow:0 14px 34px -10px rgba(200,145,47,.5); }
+  .fab.fab-cat{ bottom:166px; background:var(--panel); color:var(--ink-hi); border:1px solid var(--line-strong); box-shadow:var(--shadow-card); }
 
   /* Mã QR giới thiệu — hiển thị ngay trên trang, xem/lưu trực tiếp */
   .qr-section{ padding:10px 30px 60px; }
@@ -285,6 +285,68 @@
   .cat-row{
     display:flex; align-items:center; justify-content:space-between;
     border:1px solid var(--line); border-radius:10px; padding:8px 12px; font-size:13.5px;
+    gap:8px;
+  }
+  .cat-row.is-child{ margin-left:20px; background:var(--input-bg); }
+  .cat-row .cat-row-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cat-row .cat-row-btns{ display:flex; gap:6px; flex-shrink:0; }
+
+  /* Popup giới thiệu + tab thu gọn góc trái */
+  .intro-tab{
+    position:fixed; left:26px; bottom:26px; z-index:50;
+    display:none; align-items:center; gap:8px;
+    background:var(--panel); color:var(--ink-hi); border:1px solid var(--line-strong);
+    border-radius:var(--radius-pill); padding:13px 18px; font-weight:700; font-size:13.5px;
+    box-shadow:var(--shadow-card);
+  }
+  .intro-modal{ max-width:760px; }
+  .intro-modal p{ font-size:13.5px; color:var(--ink-mid); line-height:1.75; margin-bottom:12px; }
+  .intro-modal .intro-highlight{ color:var(--gold-soft); font-weight:700; }
+  .intro-modal .intro-qr-row{
+    display:flex; flex-direction:column; align-items:center; gap:8px; margin:18px 0;
+    border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); padding:18px 0;
+  }
+  .intro-modal .intro-qr-row .qr-label{ font-weight:700; font-size:13px; letter-spacing:.04em; color:var(--gold-soft); }
+
+  /* Chatbox hỏi-đáp */
+  .chat-fab{
+    position:fixed; right:26px; bottom:26px; z-index:60;
+    width:54px; height:54px; border-radius:50%;
+    background:var(--gold); color:var(--on-gold); border:none; font-size:22px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 14px 34px -10px rgba(200,145,47,.5);
+  }
+  .chat-panel{
+    position:fixed; right:26px; bottom:92px; z-index:59;
+    width:340px; max-width:calc(100vw - 32px); max-height:min(480px, 70vh);
+    background:var(--panel); border:1px solid var(--line-strong); border-radius:16px;
+    box-shadow:0 20px 50px -18px rgba(0,0,0,.35);
+    display:flex; flex-direction:column; overflow:hidden;
+    opacity:0; transform:translateY(14px) scale(.96); pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .chat-panel.open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .chat-panel-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; border-bottom:1px solid var(--line); font-weight:700; font-size:14px; flex-shrink:0;
+  }
+  .chat-panel-sub{ font-size:11.5px; color:var(--ink-low); padding:0 16px 10px; flex-shrink:0; }
+  .chat-panel-messages{ flex:1; overflow-y:auto; padding:0 16px 12px; display:flex; flex-direction:column; gap:10px; min-height:140px; }
+  .chat-bubble{ max-width:85%; padding:10px 13px; border-radius:14px; font-size:13px; line-height:1.55; }
+  .chat-bubble.bot{ align-self:flex-start; background:var(--input-bg); border:1px solid var(--line); color:var(--ink-hi); }
+  .chat-bubble.user{ align-self:flex-end; background:var(--gold); color:var(--on-gold); }
+  .chat-panel-input-row{ display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--line); flex-shrink:0; }
+  .chat-panel-input-row input{
+    flex:1; border:1px solid var(--line-strong); border-radius:10px; padding:9px 11px;
+    background:var(--input-bg); color:var(--ink-hi); font-size:13.5px; outline:none;
+  }
+  .chat-panel-input-row button{
+    border:none; background:var(--gold); color:var(--on-gold); border-radius:10px;
+    padding:9px 14px; font-weight:700; font-size:13px;
+  }
+  @media(max-width:480px){
+    .chat-panel{ right:12px; left:12px; width:auto; bottom:88px; }
+    .chat-fab{ right:16px; }
   }
 
   /* Xem sách nhúng ngay trong trang */
@@ -445,6 +507,11 @@
         <button class="btn-primary" id="addCatBtn" style="flex:0 0 auto; padding:10px 16px;">Thêm</button>
       </div>
     </div>
+    <div class="field">
+      <label>Thuộc thư mục cha (tuỳ chọn)</label>
+      <select id="newCatParent"><option value="">— Không, đây là danh mục gốc —</option></select>
+      <div class="hint">VD: chọn "Sách giáo khoa" làm cha, rồi thêm "Lớp 6", "Lớp 7"... làm thư mục con.</div>
+    </div>
     <div class="form-msg" id="catMsg"></div>
     <div id="catList" style="display:flex; flex-direction:column; gap:8px; margin-top:14px;"></div>
     <div class="modal-actions">
@@ -466,6 +533,53 @@
     <div class="viewer-body">
       <iframe id="viewerFrame" src="about:blank" allow="autoplay" allowfullscreen></iframe>
     </div>
+  </div>
+</div>
+
+<!-- ================= Popup: Giới thiệu thư viện ================= -->
+<div class="overlay" id="introOverlay">
+  <div class="modal intro-modal">
+    <h3>📖 Chào mừng đến với Thư viện số Mini</h3>
+    <div class="sub">THCS Phú Bài — không gian tri thức thông minh dành cho học sinh trong kỷ nguyên số</div>
+    <p>Chào mừng các bạn đến với <span class="intro-highlight">Thư viện số Mini, trường THCS Phú Bài</span> — không gian tri thức thông minh dành riêng cho thế hệ học sinh trung học trong kỷ nguyên số!</p>
+    <p>Thư viện số Mini không chỉ là một kho sách trực tuyến, mà là "người bạn đồng hành" công nghệ, giúp bạn làm chủ kiến thức và bứt phá giới hạn bản thân. Thay vì những tủ sách cồng kềnh, kho lưu trữ này nằm trọn trong một ứng dụng hoặc website. Nó được thiết kế nhỏ gọn để người dùng có thể dễ dàng truy cập, đọc và tìm kiếm tài liệu mọi lúc, mọi nơi thông qua các thiết bị thông minh (điện thoại, máy tính bảng) có kết nối internet. Dễ dàng tra cứu, phân loại và cập nhật đầu sách mới.</p>
+    <p>Ngoài định dạng sách điện tử truyền thống (PDF), chúng tôi còn đẩy mạnh phát triển sách nói (audio) — một giải pháp phù hợp với nhịp sống hiện đại, giúp người nghe có thể tiếp nhận tri thức trong lúc nghỉ ngơi, làm việc nhà hay thư giãn.</p>
+    <p>Toàn bộ nội dung sách được sưu tầm, tổng hợp từ các nguồn tài nguyên sẵn có trên Internet, với mục đích chia sẻ phục vụ bạn đọc. Tất cả sách điện tử tại Thư viện số Mini trường THCS Phú Bài hoàn toàn miễn phí.</p>
+    <p>Hãy biến chiếc điện thoại của bạn thành một giảng đường thu nhỏ. Click để khám phá và chinh phục đỉnh cao tri thức ngay hôm nay!</p>
+    <div class="intro-qr-row">
+      <div class="qr-label">QUÉT MÃ QR — KHÁM PHÁ NGAY!</div>
+      <div id="introQrHost"></div>
+    </div>
+    <p style="text-align:center; font-weight:700; color:var(--ink-hi);">Hãy cùng học sinh THCS Phú Bài làm chủ công nghệ, chinh phục tương lai!</p>
+    <div class="modal-actions">
+      <button class="btn-primary" id="introCloseBtn" style="flex:1;">Bắt đầu khám phá</button>
+    </div>
+  </div>
+</div>
+<button class="intro-tab" id="introTab">📖 Giới thiệu</button>
+
+<!-- ================= Chatbox hỏi-đáp tự động — khung neo góc phải dưới ================= -->
+<button class="chat-fab" id="chatFab" title="Hỏi đáp nhanh">💬</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-panel-header">
+    <span>💬 Hỏi đáp nhanh</span>
+    <button class="icon-btn" id="chatCloseBtn" title="Đóng">✕</button>
+  </div>
+  <div class="chat-panel-sub">Trợ lý AI trả lời dựa trên dữ liệu thư viện.</div>
+  <div id="chatMessages" class="chat-panel-messages"></div>
+  <div class="chat-panel-input-row">
+    <input type="text" id="chatInput" placeholder="Nhập câu hỏi...">
+    <button id="chatSendBtn">Gửi</button>
+  </div>
+</div>
+
+<!-- ================= Mã QR riêng cho từng thể loại ================= -->
+<div class="overlay" id="catQrOverlay">
+  <div class="modal" style="max-width:360px; text-align:center;">
+    <h3 id="catQrTitle">Mã QR thể loại</h3>
+    <div class="sub">Quét để mở thẳng danh mục này trên thư viện.</div>
+    <div id="catQrHost" style="display:flex; justify-content:center; margin:14px 0;"></div>
+    <div class="modal-actions"><button class="btn-secondary" id="catQrCloseBtn" style="flex:1;">Đóng</button></div>
   </div>
 </div>
 
@@ -491,6 +605,13 @@ const firebaseConfig = {
 const ADMIN_PASSWORD = "admin2026";
 // Link mã QR trỏ tới — mặc định là trang web đang chạy trên GitHub Pages.
 const QR_TARGET_URL = "https://idwn0811.github.io/-DigitalLibrary/";
+// Bật AI thật cho chatbox (tuỳ chọn). Để trống thì chatbox dùng câu trả lời có sẵn (không cần key).
+// Lấy API key MIỄN PHÍ tại: https://aistudio.google.com/apikey
+// Sau khi lấy key, vào Google Cloud Console → Credentials → giới hạn key theo
+// "HTTP referrer" = domain GitHub Pages của bạn, để tránh người khác lấy trộm key.
+const GEMINI_API_KEY = "AQ.Ab8RN6IXioRAqZuM3GVeaHc8rPdjGO0fX3ZII6Ml2jJSlqOxnA";
+// Thử lần lượt các tên model này — model nào Google đang mở cho key của bạn sẽ được dùng.
+const GEMINI_MODELS_TRY = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -551,26 +672,44 @@ let categories = [];
 categoriesRef.once("value").then(snap => {
   if (!snap.exists()){
     const seed = {};
-    DEFAULT_CATEGORIES.forEach((name, i) => { seed["c" + (i + 1)] = name; });
+    DEFAULT_CATEGORIES.forEach((name, i) => { seed["c" + (i + 1)] = { name, parentId: null }; });
     categoriesRef.set(seed).catch(err => console.error("Không tạo được thể loại mặc định:", err.message));
   }
 }).catch(err => console.error("Không đọc được nhánh categories:", err.message));
 
 categoriesRef.on("value", (snap) => {
   const val = snap.val() || {};
-  categories = Object.entries(val).map(([id, name]) => ({ id, name }));
+  // Tương thích ngược: mục cũ lưu dạng chuỗi thuần (chưa có parentId)
+  categories = Object.entries(val).map(([id, v]) => {
+    if (typeof v === "string") return { id, name: v, parentId: null };
+    return { id, name: v.name, parentId: v.parentId || null };
+  });
   renderTabs();
   renderCategorySelect();
+  renderCategoryParentSelect();
   renderCategoryManager();
   renderGrid();
 });
 
+function topLevelCategories(){ return categories.filter(c => !c.parentId); }
+function childrenOf(parentId){ return categories.filter(c => c.parentId === parentId); }
+function getDescendantNames(catName){
+  const cat = categories.find(c => c.name === catName);
+  if (!cat) return [catName];
+  const kids = childrenOf(cat.id).map(c => c.name);
+  return [catName, ...kids];
+}
+
 function renderTabs(){
   const tabsEl = document.getElementById("tabs");
-  if (activeCat !== "all" && !categories.some(c => c.name === activeCat)) activeCat = "all";
+  const allNames = categories.map(c => c.name);
+  if (activeCat !== "all" && !allNames.includes(activeCat)) activeCat = "all";
   let html = `<button class="tab${activeCat === "all" ? " active" : ""}" data-cat="all">Tất cả</button>`;
-  categories.forEach(c => {
-    html += `<button class="tab${activeCat === c.name ? " active" : ""}" data-cat="${escapeHtml(c.name)}">${escapeHtml(c.name)}</button>`;
+  topLevelCategories().forEach(top => {
+    html += `<button class="tab${activeCat === top.name ? " active" : ""}" data-cat="${escapeHtml(top.name)}">${escapeHtml(top.name)}</button>`;
+    childrenOf(top.id).forEach(child => {
+      html += `<button class="tab${activeCat === child.name ? " active" : ""}" data-cat="${escapeHtml(child.name)}" style="font-size:12px; opacity:.85;">› ${escapeHtml(child.name)}</button>`;
+    });
   });
   tabsEl.innerHTML = html;
 }
@@ -578,42 +717,81 @@ function renderTabs(){
 function renderCategorySelect(){
   const sel = document.getElementById("fCategory");
   const current = sel.value;
-  sel.innerHTML = categories.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join("");
+  let opts = [];
+  topLevelCategories().forEach(top => {
+    opts.push(`<option value="${escapeHtml(top.name)}">${escapeHtml(top.name)}</option>`);
+    childrenOf(top.id).forEach(child => {
+      opts.push(`<option value="${escapeHtml(child.name)}">— ${escapeHtml(child.name)}</option>`);
+    });
+  });
+  sel.innerHTML = opts.join("");
   if (categories.some(c => c.name === current)) sel.value = current;
+}
+
+function renderCategoryParentSelect(){
+  const sel = document.getElementById("newCatParent");
+  const current = sel.value;
+  sel.innerHTML = `<option value="">— Không, đây là danh mục gốc —</option>` +
+    topLevelCategories().map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+  if ([...sel.options].some(o => o.value === current)) sel.value = current;
 }
 
 function renderCategoryManager(){
   const list = document.getElementById("catList");
   if (categories.length === 0){ list.innerHTML = `<div class="hint">Chưa có thể loại nào.</div>`; return; }
-  list.innerHTML = categories.map(c => `
+  let html = "";
+  topLevelCategories().forEach(top => {
+    html += `
     <div class="cat-row">
-      <span>${escapeHtml(c.name)}</span>
-      <button class="admin-mini" data-delcat="${c.id}" title="Xoá">🗑️</button>
-    </div>`).join("");
+      <span class="cat-row-name">${escapeHtml(top.name)}</span>
+      <div class="cat-row-btns">
+        <button class="admin-mini" data-catqr="${top.id}" data-catname="${escapeHtml(top.name)}" title="Mã QR">🔳</button>
+        <button class="admin-mini" data-delcat="${top.id}" title="Xoá">🗑️</button>
+      </div>
+    </div>`;
+    childrenOf(top.id).forEach(child => {
+      html += `
+      <div class="cat-row is-child">
+        <span class="cat-row-name">› ${escapeHtml(child.name)}</span>
+        <div class="cat-row-btns">
+          <button class="admin-mini" data-catqr="${child.id}" data-catname="${escapeHtml(child.name)}" title="Mã QR">🔳</button>
+          <button class="admin-mini" data-delcat="${child.id}" title="Xoá">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
+  list.innerHTML = html;
 }
 
 document.getElementById("addCatBtn").addEventListener("click", () => {
   const input = document.getElementById("newCatName");
+  const parentSel = document.getElementById("newCatParent");
   const msg = document.getElementById("catMsg");
   msg.className = "form-msg";
   const name = input.value.trim();
+  const parentId = parentSel.value || null;
   if (!name) return;
   if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())){ msg.textContent = "Thể loại này đã có rồi."; msg.classList.add("error"); return; }
-  categoriesRef.push(name)
-    .then(() => { input.value = ""; msg.textContent = "Đã thêm thể loại!"; msg.classList.add("ok"); })
+  categoriesRef.push({ name, parentId })
+    .then(() => { input.value = ""; parentSel.value = ""; msg.textContent = "Đã thêm thể loại!"; msg.classList.add("ok"); })
     .catch(err => {
       msg.textContent = "Không ghi được: " + err.message + " — kiểm tra lại Rules của Realtime Database (nhánh \"categories\" cần .write: true).";
       msg.classList.add("error");
     });
 });
 document.getElementById("catList").addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-delcat]");
-  if (!btn) return;
+  const delBtn = e.target.closest("[data-delcat]");
+  const qrBtn = e.target.closest("[data-catqr]");
   const msg = document.getElementById("catMsg");
   msg.className = "form-msg";
-  if (confirm("Xoá thể loại này? Sách đã gắn thể loại cũ vẫn giữ nguyên nhãn, chỉ ẩn khỏi danh sách lọc.")){
-    categoriesRef.child(btn.dataset.delcat).remove()
-      .catch(err => { msg.textContent = "Không xoá được: " + err.message; msg.classList.add("error"); });
+  if (qrBtn){ openCategoryQR(qrBtn.dataset.catname); return; }
+  if (delBtn){
+    const id = delBtn.dataset.delcat;
+    if (childrenOf(id).length > 0){ msg.textContent = "Xoá hết thư mục con bên trong trước khi xoá thư mục cha này."; msg.classList.add("error"); return; }
+    if (confirm("Xoá thể loại này? Sách đã gắn thể loại cũ vẫn giữ nguyên nhãn, chỉ ẩn khỏi danh sách lọc.")){
+      categoriesRef.child(id).remove()
+        .catch(err => { msg.textContent = "Không xoá được: " + err.message; msg.classList.add("error"); });
+    }
   }
 });
 document.getElementById("catCloseBtn").addEventListener("click", () => document.getElementById("catOverlay").classList.remove("open"));
@@ -624,7 +802,7 @@ document.getElementById("newCatName").addEventListener("keydown", (e) => { if (e
    6) DỮ LIỆU SÁCH — đọc realtime từ Firebase
    ===================================================================== */
 let allBooks = [];
-let activeCat = "all";
+let activeCat = new URLSearchParams(window.location.search).get("cat") || "all";
 let activeType = "all";
 let searchTerm = "";
 let isAdmin = sessionStorage.getItem("tvs_admin") === "1";
@@ -655,7 +833,7 @@ function renderGrid(){
   const grid = document.getElementById("grid");
   const q = searchTerm.trim().toLowerCase();
   const filtered = allBooks.filter(b => {
-    if (activeCat !== "all" && b.category !== activeCat) return false;
+    if (activeCat !== "all" && !getDescendantNames(activeCat).includes(b.category)) return false;
     if (activeType !== "all" && b.type !== activeType) return false;
     if (q && !(`${b.title} ${b.author||""}`.toLowerCase().includes(q))) return false;
     return true;
@@ -935,6 +1113,177 @@ function buildPosterInline(){
   document.getElementById("qrPosterHost").appendChild(poster);
 }
 document.fonts.ready.then(() => setTimeout(buildPosterInline, 200));
+
+/* =====================================================================
+   11) POPUP GIỚI THIỆU — tự mở lần đầu, đóng thì thu về góc trái
+   ===================================================================== */
+const introOverlay = document.getElementById("introOverlay");
+const introTab = document.getElementById("introTab");
+
+function openIntro(){ introOverlay.classList.add("open"); }
+function closeIntro(){
+  introOverlay.classList.remove("open");
+  localStorage.setItem("tvs_intro_seen", "1");
+  introTab.style.display = "flex";
+}
+document.getElementById("introCloseBtn").addEventListener("click", closeIntro);
+introOverlay.addEventListener("click", (e) => { if (e.target === introOverlay) closeIntro(); });
+introTab.addEventListener("click", openIntro);
+
+if (!localStorage.getItem("tvs_intro_seen")) {
+  setTimeout(openIntro, 400);
+} else {
+  introTab.style.display = "flex";
+}
+
+// QR nhỏ trong popup giới thiệu, trỏ thẳng về trang chủ thư viện
+const introQrHidden = document.createElement("div");
+introQrHidden.style.position = "absolute";
+introQrHidden.style.left = "-9999px";
+document.body.appendChild(introQrHidden);
+new QRCode(introQrHidden, { text: QR_TARGET_URL, width: 160, height: 160, colorDark: "#171b2e", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+function mountIntroQr(){
+  const c = introQrHidden.querySelector("canvas") || introQrHidden.querySelector("img");
+  if (!c){ setTimeout(mountIntroQr, 200); return; }
+  document.getElementById("introQrHost").appendChild(c);
+}
+mountIntroQr();
+
+/* =====================================================================
+   12) MÃ QR RIÊNG CHO TỪNG THỂ LOẠI
+   ===================================================================== */
+const catQrOverlay = document.getElementById("catQrOverlay");
+function openCategoryQR(name){
+  document.getElementById("catQrTitle").textContent = "Mã QR: " + name;
+  const host = document.getElementById("catQrHost");
+  host.innerHTML = "";
+  const targetUrl = QR_TARGET_URL + "?cat=" + encodeURIComponent(name);
+  new QRCode(host, { text: targetUrl, width: 220, height: 220, colorDark: "#171b2e", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+  catQrOverlay.classList.add("open");
+}
+document.getElementById("catQrCloseBtn").addEventListener("click", () => catQrOverlay.classList.remove("open"));
+catQrOverlay.addEventListener("click", (e) => { if (e.target === catQrOverlay) catQrOverlay.classList.remove("open"); });
+
+/* =====================================================================
+   13) CHATBOX HỎI-ĐÁP TỰ ĐỘNG (dựa trên từ khoá, không cần máy chủ AI)
+   ===================================================================== */
+const FAQ_DATA = [
+  { keywords:["mượn"], answer:"Thư viện số này không cần mượn — bạn chỉ cần bấm \"Đọc ngay / Nghe ngay\" trên mỗi cuốn sách là xem được ngay, hoàn toàn miễn phí." },
+  { keywords:["thêm sách","đăng sách","góp sách","gửi sách"], answer:"Chỉ tài khoản quản trị (thủ thư/giáo viên phụ trách) mới thêm được sách mới. Nếu bạn muốn đóng góp sách, hãy liên hệ trực tiếp thầy/cô phụ trách thư viện nhé." },
+  { keywords:["giờ mở cửa","mấy giờ","thời gian mở"], answer:"Thư viện số hoạt động 24/7 — bạn đọc sách bất cứ lúc nào, chỉ cần có kết nối internet." },
+  { keywords:["miễn phí","tốn tiền","trả phí","giá tiền"], answer:"Toàn bộ sách trên Thư viện số Mini đều hoàn toàn miễn phí." },
+  { keywords:["tải xuống","download","lưu về máy","lưu file"], answer:"Sách được xem trực tiếp trên trang qua Google Drive/YouTube, không hỗ trợ tải file về máy để tôn trọng bản quyền và tiết kiệm dung lượng." },
+  { keywords:["liên hệ","hỗ trợ","góp ý","phản hồi"], answer:"Bạn có thể liên hệ trực tiếp thầy/cô phụ trách thư viện tại trường THCS Phú Bài để được hỗ trợ hoặc góp ý nhé." },
+  { keywords:["thể loại","danh mục","phân loại","tìm sách","tìm kiếm"], answer:"Bạn có thể lọc sách theo thể loại ở thanh menu ngay dưới ô tìm kiếm, hoặc gõ từ khoá vào ô tìm kiếm phía trên để tra cứu nhanh." },
+  { keywords:["qr"], answer:"Mỗi thể loại đều có mã QR riêng (thủ thư tạo trong mục \"🏷️ Thể loại\") — quét mã là mở thẳng đúng danh mục đó, không cần tìm lại." }
+];
+function findFaqAnswer(text){
+  const t = text.toLowerCase();
+  const hit = FAQ_DATA.find(f => f.keywords.some(k => t.includes(k)));
+  return hit ? hit.answer : "Mình chưa có câu trả lời sẵn cho câu hỏi này. Bạn thử hỏi cách khác, hoặc liên hệ trực tiếp thầy/cô phụ trách thư viện nhé!";
+}
+
+const chatPanel = document.getElementById("chatPanel");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+let chatStarted = false;
+
+function addChatMessage(role, text){
+  const el = document.createElement("div");
+  el.className = "chat-bubble " + role;
+  el.textContent = text;
+  chatMessages.appendChild(el);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return el;
+}
+
+/* AI thật (Gemini) — trả lời dựa trên đúng danh sách sách/thể loại hiện có */
+function buildLibraryContext(){
+  const catLines = categories.map(c => {
+    const parent = c.parentId ? categories.find(p => p.id === c.parentId) : null;
+    return parent ? `- ${c.name} (thuộc thư mục: ${parent.name})` : `- ${c.name}`;
+  }).join("\n");
+  const bookLines = allBooks.slice(0, 200).map(b =>
+    `- "${b.title}"${b.author ? " của " + b.author : ""} — thể loại: ${b.category}, định dạng: ${b.type}`
+  ).join("\n");
+  return `DANH SÁCH THỂ LOẠI:\n${catLines || "(chưa có)"}\n\nDANH SÁCH SÁCH/AUDIO/VIDEO HIỆN CÓ (tối đa 200 mục):\n${bookLines || "(chưa có sách nào)"}`;
+}
+
+async function callGeminiOnce(model, sys, question){
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_API_KEY },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: sys }] },
+        contents: [{ role: "user", parts: [{ text: question }] }]
+      })
+    }
+  );
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!answer) throw new Error("Không nhận được phản hồi từ AI");
+  return answer.trim();
+}
+
+async function askGeminiAI(question){
+  const sys = "Bạn là trợ lý ảo thân thiện của Thư viện số Mini, trường THCS Phú Bài, trả lời cho học sinh cấp 2. " +
+    "Trả lời ngắn gọn (2-4 câu), bằng tiếng Việt. Chỉ dựa vào dữ liệu thư viện dưới đây để trả lời các câu hỏi về sách, thể loại, tác giả; " +
+    "nếu không tìm thấy thông tin liên quan trong dữ liệu, hãy nói rõ là thư viện chưa có, không tự bịa ra sách không tồn tại. " +
+    "Nếu câu hỏi ngoài phạm vi thư viện, lịch sự từ chối và hướng người dùng quay lại chủ đề sách.\n\n" + buildLibraryContext();
+
+  let lastErr;
+  for (const model of GEMINI_MODELS_TRY){
+    try { return await callGeminiOnce(model, sys, question); }
+    catch (err) {
+      lastErr = err;
+      if (!String(err.message).includes("404")) throw err; // lỗi khác 404 (vd. quyền/quota) thì dừng ngay, không thử model khác
+    }
+  }
+  throw lastErr;
+}
+
+document.getElementById("chatFab").addEventListener("click", () => {
+  const willOpen = !chatPanel.classList.contains("open");
+  chatPanel.classList.toggle("open", willOpen);
+  if (willOpen){
+    if (!chatStarted){
+      chatStarted = true;
+      addChatMessage("bot", "Xin chào! Mình là trợ lý thư viện 🤖. Bạn có thể hỏi mình về cách đọc sách, thêm sách, thể loại, giờ mở cửa... nhé!");
+    }
+    chatInput.focus();
+  }
+});
+document.getElementById("chatCloseBtn").addEventListener("click", () => chatPanel.classList.remove("open"));
+document.addEventListener("click", (e) => {
+  if (!chatPanel.classList.contains("open")) return;
+  if (chatPanel.contains(e.target) || e.target.closest("#chatFab")) return;
+  chatPanel.classList.remove("open");
+});
+
+function sendChatMessage(){
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addChatMessage("user", text);
+  chatInput.value = "";
+
+  if (GEMINI_API_KEY){
+    const thinkingEl = addChatMessage("bot", "Đang trả lời…");
+    askGeminiAI(text)
+      .then(answer => { thinkingEl.textContent = answer; chatMessages.scrollTop = chatMessages.scrollHeight; })
+      .catch(err => {
+        thinkingEl.textContent = "AI đang gặp sự cố (" + err.message + "). Câu trả lời có sẵn: " + findFaqAnswer(text);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+  } else {
+    const answer = findFaqAnswer(text);
+    setTimeout(() => addChatMessage("bot", answer), 350);
+  }
+}
+document.getElementById("chatSendBtn").addEventListener("click", sendChatMessage);
+chatInput.addEventListener("keydown", (e) => { if (e.key === "Enter") sendChatMessage(); });
 </script>
 </body>
 </html>
