@@ -165,6 +165,12 @@
   }
   .tab.active{background:var(--gold); border-color:var(--gold); color:var(--on-gold);}
   .tab:not(.active):hover{border-color:var(--line-strong); color:var(--ink-hi);}
+  .tab.sub-tab{
+    font-size:12px; padding:7px 14px;
+    border-color:rgba(13,148,136,.35); color:#0d9488; background:rgba(13,148,136,.08);
+  }
+  .tab.sub-tab.active{ background:#0d9488; border-color:#0d9488; color:#fff; }
+  .tab.sub-tab:not(.active):hover{ border-color:#0d9488; color:#0d9488; }
 
   .grid-wrap{padding:10px 30px 40px;}
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:16px;}
@@ -311,10 +317,15 @@
   /* Chatbox hỏi-đáp */
   .chat-fab{
     position:fixed; right:26px; bottom:26px; z-index:60;
-    width:54px; height:54px; border-radius:50%;
-    background:var(--gold); color:var(--on-gold); border:none; font-size:22px;
-    display:flex; align-items:center; justify-content:center;
+    height:54px; padding:0 20px 0 16px; border-radius:var(--radius-pill);
+    background:var(--gold); color:var(--on-gold); border:none; font-size:20px;
+    display:flex; align-items:center; gap:9px;
     box-shadow:0 14px 34px -10px rgba(200,145,47,.5);
+  }
+  .chat-fab-label{ font-size:14px; font-weight:700; }
+  @media(max-width:480px){
+    .chat-fab-label{ display:none; }
+    .chat-fab{ padding:0; width:54px; justify-content:center; }
   }
   .chat-panel{
     position:fixed; right:26px; bottom:92px; z-index:59;
@@ -424,13 +435,18 @@
       </select>
     </div>
     <div class="tabs" id="tabs">
-      <button class="tab active" data-cat="all">Tất cả</button>
+      <button class="tab active" data-cat="all">🔥 Xem nhiều nhất</button>
     </div>
+    <div class="tabs" id="subtabs" style="display:none; margin-top:6px;"></div>
   </section>
 
   <section class="grid-wrap">
+    <h3 id="gridHeading" style="font-size:15px; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:6px;"></h3>
     <div class="grid" id="grid">
       <div class="empty-state"><h4>Đang tải thư viện…</h4><p>Vui lòng chờ trong giây lát.</p></div>
+    </div>
+    <div id="showMoreWrap" style="display:none; justify-content:center; margin-top:20px;">
+      <button class="btn-secondary" id="showMoreBtn" style="flex:0 0 auto; max-width:280px; padding:12px 22px;">Xem thêm sách khác ↓</button>
     </div>
   </section>
 
@@ -559,7 +575,7 @@
 <button class="intro-tab" id="introTab">📖 Giới thiệu</button>
 
 <!-- ================= Chatbox hỏi-đáp tự động — khung neo góc phải dưới ================= -->
-<button class="chat-fab" id="chatFab" title="Hỏi đáp nhanh">💬</button>
+<button class="chat-fab" id="chatFab" title="Hỏi đáp nhanh">💬 <span class="chat-fab-label">Trợ lý AI</span></button>
 <div class="chat-panel" id="chatPanel">
   <div class="chat-panel-header">
     <span>💬 Hỏi đáp nhanh</span>
@@ -606,12 +622,11 @@ const ADMIN_PASSWORD = "admin2026";
 // Link mã QR trỏ tới — mặc định là trang web đang chạy trên GitHub Pages.
 const QR_TARGET_URL = "https://idwn0811.github.io/-DigitalLibrary/";
 // Bật AI thật cho chatbox (tuỳ chọn). Để trống thì chatbox dùng câu trả lời có sẵn (không cần key).
-// Lấy API key MIỄN PHÍ tại: https://aistudio.google.com/apikey
-// Sau khi lấy key, vào Google Cloud Console → Credentials → giới hạn key theo
-// "HTTP referrer" = domain GitHub Pages của bạn, để tránh người khác lấy trộm key.
-const GEMINI_API_KEY = "AQ.Ab8RN6IXioRAqZuM3GVeaHc8rPdjGO0fX3ZII6Ml2jJSlqOxnA";
-// Thử lần lượt các tên model này — model nào Google đang mở cho key của bạn sẽ được dùng.
-const GEMINI_MODELS_TRY = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
+// Dùng Groq (miễn phí, không cần thẻ) thay vì Gemini, vì key Gemini kiểu mới (AQ.xxx) đang bị lỗi 401
+// trên diện rộng phía Google kể từ giữa 2026, chưa có cách khắc phục ổn định từ phía web.
+// Lấy key miễn phí tại: https://console.groq.com/keys (đăng nhập Google/GitHub, không cần thẻ)
+const GROQ_API_KEY = "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";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -702,16 +717,34 @@ function getDescendantNames(catName){
 
 function renderTabs(){
   const tabsEl = document.getElementById("tabs");
+  const subtabsEl = document.getElementById("subtabs");
   const allNames = categories.map(c => c.name);
   if (activeCat !== "all" && !allNames.includes(activeCat)) activeCat = "all";
-  let html = `<button class="tab${activeCat === "all" ? " active" : ""}" data-cat="all">Tất cả</button>`;
+
+  // Xác định thư mục cha đang "trong ngữ cảnh" để quyết định có hiện hàng con hay không
+  let contextParent = null;
+  const directCat = categories.find(c => c.name === activeCat);
+  if (directCat){
+    contextParent = directCat.parentId ? categories.find(c => c.id === directCat.parentId) : directCat;
+  }
+
+  let html = `<button class="tab${activeCat === "all" ? " active" : ""}" data-cat="all">🔥 Xem nhiều nhất</button>`;
   topLevelCategories().forEach(top => {
-    html += `<button class="tab${activeCat === top.name ? " active" : ""}" data-cat="${escapeHtml(top.name)}">${escapeHtml(top.name)}</button>`;
-    childrenOf(top.id).forEach(child => {
-      html += `<button class="tab${activeCat === child.name ? " active" : ""}" data-cat="${escapeHtml(child.name)}" style="font-size:12px; opacity:.85;">› ${escapeHtml(child.name)}</button>`;
-    });
+    const isActiveTop = activeCat === top.name || (contextParent && contextParent.id === top.id);
+    html += `<button class="tab${isActiveTop ? " active" : ""}" data-cat="${escapeHtml(top.name)}">${escapeHtml(top.name)}</button>`;
   });
   tabsEl.innerHTML = html;
+
+  const kids = contextParent ? childrenOf(contextParent.id) : [];
+  if (kids.length > 0){
+    subtabsEl.style.display = "flex";
+    subtabsEl.innerHTML = kids.map(child =>
+      `<button class="tab sub-tab${activeCat === child.name ? " active" : ""}" data-cat="${escapeHtml(child.name)}">${escapeHtml(child.name)}</button>`
+    ).join("");
+  } else {
+    subtabsEl.style.display = "none";
+    subtabsEl.innerHTML = "";
+  }
 }
 
 function renderCategorySelect(){
@@ -803,6 +836,7 @@ document.getElementById("newCatName").addEventListener("keydown", (e) => { if (e
    ===================================================================== */
 let allBooks = [];
 let activeCat = new URLSearchParams(window.location.search).get("cat") || "all";
+let expandedAll = false;
 let activeType = "all";
 let searchTerm = "";
 let isAdmin = sessionStorage.getItem("tvs_admin") === "1";
@@ -832,12 +866,26 @@ const typeMeta = {
 function renderGrid(){
   const grid = document.getElementById("grid");
   const q = searchTerm.trim().toLowerCase();
-  const filtered = allBooks.filter(b => {
+  const sourceBooks = allBooks.filter(b => {
     if (activeCat !== "all" && !getDescendantNames(activeCat).includes(b.category)) return false;
     if (activeType !== "all" && b.type !== activeType) return false;
     if (q && !(`${b.title} ${b.author||""}`.toLowerCase().includes(q))) return false;
     return true;
   });
+
+  const isFeaturedView = activeCat === "all" && activeType === "all" && !q && !expandedAll;
+  const filtered = isFeaturedView
+    ? [...sourceBooks].sort((a, b) => (b.views||0) - (a.views||0)).slice(0, 6)
+    : sourceBooks;
+
+  const heading = document.getElementById("gridHeading");
+  if (q) heading.textContent = `Kết quả tìm kiếm cho "${searchTerm.trim()}"`;
+  else if (activeCat === "all" && activeType === "all") heading.textContent = expandedAll ? "📚 Toàn bộ thư viện" : "🔥 Được xem nhiều nhất";
+  else if (activeCat !== "all") heading.textContent = "📂 " + activeCat;
+  else heading.textContent = "Kết quả lọc";
+
+  const showMoreWrap = document.getElementById("showMoreWrap");
+  showMoreWrap.style.display = (isFeaturedView && sourceBooks.length > 6) ? "flex" : "none";
 
   if (filtered.length === 0){
     grid.innerHTML = `<div class="empty-state"><h4>Chưa có sách nào ở đây</h4><p>${isAdmin ? 'Bấm "Thêm sách mới" để bắt đầu xây dựng thư viện.' : 'Thử đổi bộ lọc hoặc quay lại sau nhé.'}</p></div>`;
@@ -955,13 +1003,17 @@ gridObserver.observe(document.getElementById("grid"), { childList:true });
    ===================================================================== */
 document.getElementById("searchInput").addEventListener("input", (e) => { searchTerm = e.target.value; renderGrid(); });
 document.getElementById("typeFilter").addEventListener("change", (e) => { activeType = e.target.value; renderGrid(); });
-document.getElementById("tabs").addEventListener("click", (e) => {
+function handleTabClick(e){
   const tab = e.target.closest(".tab");
   if (!tab) return;
   activeCat = tab.dataset.cat;
+  expandedAll = false;
   renderTabs();
   renderGrid();
-});
+}
+document.getElementById("tabs").addEventListener("click", handleTabClick);
+document.getElementById("subtabs").addEventListener("click", handleTabClick);
+document.getElementById("showMoreBtn").addEventListener("click", () => { expandedAll = true; renderGrid(); });
 
 /* =====================================================================
    8) ĐĂNG NHẬP QUẢN TRỊ (mật khẩu cố định trong file, không dùng Firebase Auth)
@@ -1209,40 +1261,34 @@ function buildLibraryContext(){
   return `DANH SÁCH THỂ LOẠI:\n${catLines || "(chưa có)"}\n\nDANH SÁCH SÁCH/AUDIO/VIDEO HIỆN CÓ (tối đa 200 mục):\n${bookLines || "(chưa có sách nào)"}`;
 }
 
-async function callGeminiOnce(model, sys, question){
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_API_KEY },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: sys }] },
-        contents: [{ role: "user", parts: [{ text: question }] }]
-      })
-    }
-  );
+async function callGroqOnce(sys, question){
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + GROQ_API_KEY
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: [
+        { role: "system", content: sys },
+        { role: "user", content: question }
+      ]
+    })
+  });
   if (!res.ok) throw new Error("HTTP " + res.status);
   const data = await res.json();
-  const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const answer = data?.choices?.[0]?.message?.content;
   if (!answer) throw new Error("Không nhận được phản hồi từ AI");
   return answer.trim();
 }
 
-async function askGeminiAI(question){
+async function askAI(question){
   const sys = "Bạn là trợ lý ảo thân thiện của Thư viện số Mini, trường THCS Phú Bài, trả lời cho học sinh cấp 2. " +
     "Trả lời ngắn gọn (2-4 câu), bằng tiếng Việt. Chỉ dựa vào dữ liệu thư viện dưới đây để trả lời các câu hỏi về sách, thể loại, tác giả; " +
     "nếu không tìm thấy thông tin liên quan trong dữ liệu, hãy nói rõ là thư viện chưa có, không tự bịa ra sách không tồn tại. " +
     "Nếu câu hỏi ngoài phạm vi thư viện, lịch sự từ chối và hướng người dùng quay lại chủ đề sách.\n\n" + buildLibraryContext();
-
-  let lastErr;
-  for (const model of GEMINI_MODELS_TRY){
-    try { return await callGeminiOnce(model, sys, question); }
-    catch (err) {
-      lastErr = err;
-      if (!String(err.message).includes("404")) throw err; // lỗi khác 404 (vd. quyền/quota) thì dừng ngay, không thử model khác
-    }
-  }
-  throw lastErr;
+  return callGroqOnce(sys, question);
 }
 
 document.getElementById("chatFab").addEventListener("click", () => {
@@ -1269,9 +1315,9 @@ function sendChatMessage(){
   addChatMessage("user", text);
   chatInput.value = "";
 
-  if (GEMINI_API_KEY){
+  if (GROQ_API_KEY){
     const thinkingEl = addChatMessage("bot", "Đang trả lời…");
-    askGeminiAI(text)
+    askAI(text)
       .then(answer => { thinkingEl.textContent = answer; chatMessages.scrollTop = chatMessages.scrollHeight; })
       .catch(err => {
         thinkingEl.textContent = "AI đang gặp sự cố (" + err.message + "). Câu trả lời có sẵn: " + findFaqAnswer(text);
