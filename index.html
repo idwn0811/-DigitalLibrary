@@ -1195,9 +1195,12 @@ introQrHidden.style.left = "-9999px";
 document.body.appendChild(introQrHidden);
 new QRCode(introQrHidden, { text: QR_TARGET_URL, width: 160, height: 160, colorDark: "#171b2e", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
 function mountIntroQr(){
-  const c = introQrHidden.querySelector("canvas") || introQrHidden.querySelector("img");
-  if (!c){ setTimeout(mountIntroQr, 200); return; }
-  document.getElementById("introQrHost").appendChild(c);
+  const img = introQrHidden.querySelector("img");
+  const canvas = introQrHidden.querySelector("canvas");
+  const el = img || canvas;
+  if (!el){ setTimeout(mountIntroQr, 200); return; }
+  el.style.display = ""; // thư viện QR có thể ẩn phần tử này bằng inline style, cần bỏ đi để hiện ra
+  document.getElementById("introQrHost").appendChild(el);
 }
 mountIntroQr();
 
