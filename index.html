@@ -622,10 +622,10 @@ const ADMIN_PASSWORD = "admin2026";
 // Link mã QR trỏ tới — mặc định là trang web đang chạy trên GitHub Pages.
 const QR_TARGET_URL = "https://idwn0811.github.io/-DigitalLibrary/";
 // Bật AI thật cho chatbox (tuỳ chọn). Để trống thì chatbox dùng câu trả lời có sẵn (không cần key).
-// Dùng Groq (miễn phí, không cần thẻ) thay vì Gemini, vì key Gemini kiểu mới (AQ.xxx) đang bị lỗi 401
-// trên diện rộng phía Google kể từ giữa 2026, chưa có cách khắc phục ổn định từ phía web.
-// Lấy key miễn phí tại: https://console.groq.com/keys (đăng nhập Google/GitHub, không cần thẻ)
-const GROQ_API_KEY = "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";
+// KHÔNG dán API key trực tiếp ở đây nữa — key được giữ kín trong Cloudflare Worker.
+// Dán URL của Worker (bước thiết lập ở README) vào đây, dạng:
+// https://ten-worker.ten-tai-khoan.workers.dev
+const AI_PROXY_URL = "https://hidden-paper-c789.truongpt0811.workers.dev/";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 
 firebase.initializeApp(firebaseConfig);
@@ -1265,12 +1265,9 @@ function buildLibraryContext(){
 }
 
 async function callGroqOnce(sys, question){
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  const res = await fetch(AI_PROXY_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + GROQ_API_KEY
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: GROQ_MODEL,
       messages: [
@@ -1318,7 +1315,7 @@ function sendChatMessage(){
   addChatMessage("user", text);
   chatInput.value = "";
 
-  if (GROQ_API_KEY){
+  if (AI_PROXY_URL){
     const thinkingEl = addChatMessage("bot", "Đang trả lời…");
     askAI(text)
       .then(answer => { thinkingEl.textContent = answer; chatMessages.scrollTop = chatMessages.scrollHeight; })
