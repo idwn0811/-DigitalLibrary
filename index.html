@@ -191,6 +191,8 @@
     width:34px; height:34px; border-radius:10px; display:grid; place-items:center; flex-shrink:0;
     background:var(--gold-dim); color:var(--gold-soft); border:1px solid var(--line);
   }
+  /* Màu riêng cho từng định dạng — dễ phân biệt trong danh sách */
+  /* Màu riêng cho từng định dạng — dễ phân biệt trong danh sách */
   .card.type-ebook{ border-color:rgba(59,125,216,.35); border-top:3px solid #3b7dd8;
     background: linear-gradient(rgba(59,125,216,.06), rgba(59,125,216,.06)), linear-gradient(160deg, var(--card-1), var(--card-2)); }
   .card.type-audio{ border-color:rgba(147,51,234,.35); border-top:3px solid #9333ea;
@@ -239,6 +241,7 @@
   .fab.fab-add{ bottom:96px; background:var(--gold); color:var(--on-gold); box-shadow:0 14px 34px -10px rgba(200,145,47,.5); }
   .fab.fab-cat{ bottom:166px; background:var(--panel); color:var(--ink-hi); border:1px solid var(--line-strong); box-shadow:var(--shadow-card); }
 
+  /* Mã QR giới thiệu — hiển thị ngay trên trang, xem/lưu trực tiếp */
   .qr-section{ padding:10px 30px 60px; }
   .qr-section-inner{
     display:flex; align-items:center; gap:22px; flex-wrap:wrap;
@@ -294,6 +297,7 @@
   .cat-row .cat-row-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .cat-row .cat-row-btns{ display:flex; gap:6px; flex-shrink:0; }
 
+  /* Popup giới thiệu + tab thu gọn góc trái */
   .intro-tab{
     position:fixed; left:26px; bottom:26px; z-index:50;
     display:none; align-items:center; gap:8px;
@@ -310,6 +314,7 @@
   }
   .intro-modal .intro-qr-row .qr-label{ font-weight:700; font-size:13px; letter-spacing:.04em; color:var(--gold-soft); }
 
+  /* Chatbox hỏi-đáp */
   .chat-fab{
     position:fixed; right:26px; bottom:26px; z-index:60;
     height:54px; padding:0 20px 0 16px; border-radius:var(--radius-pill);
@@ -355,6 +360,7 @@
     .chat-fab{ right:16px; }
   }
 
+  /* Xem sách nhúng ngay trong trang */
   .viewer-overlay{ padding:0; }
   .viewer-overlay .viewer-modal{
     width:90%; height:90vh; margin:auto;
@@ -430,7 +436,6 @@
     </div>
     <div class="tabs" id="tabs">
       <button class="tab active" data-cat="all">🔥 Xem nhiều nhất</button>
-      <button class="tab" data-cat="latest">✨ Mới cập nhật</button>
     </div>
     <div class="tabs" id="subtabs" style="display:none; margin-top:6px;"></div>
   </section>
@@ -531,7 +536,7 @@
   </div>
 </div>
 
-<!-- ================= Modal: Xem sách ngay trong trang ================= -->
+<!-- ================= Modal: Xem sách ngay trong trang (nhúng Google Drive) ================= -->
 <div class="overlay viewer-overlay" id="viewerOverlay">
   <div class="viewer-modal">
     <div class="viewer-header">
@@ -553,13 +558,15 @@
     <h3>📖 Chào mừng đến với Thư viện số Mini</h3>
     <div class="sub">THCS Phú Bài — không gian tri thức thông minh dành cho học sinh trong kỷ nguyên số</div>
     <p>Chào mừng các bạn đến với <span class="intro-highlight">Thư viện số Mini, trường THCS Phú Bài</span> — không gian tri thức thông minh dành riêng cho thế hệ học sinh trung học trong kỷ nguyên số!</p>
-    <p>Thư viện số Mini không chỉ là một kho sách trực tuyến, mà là "người bạn đồng hành" công nghệ, giúp bạn làm chủ kiến thức và bứt phá giới hạn bản thân. Thay vì những tủ sách cồng kềnh, kho lưu trữ này nằm trọn trong một ứng dụng hoặc website. Nó được thiết kế nhỏ gọn để người dùng có thể dễ dàng truy cập, đọc và tìm kiếm tài liệu mọi lúc, mọi nơi thông qua các thiết bị thông minh (điện thoại, máy tính bảng) có kết nối internet.</p>
-    <p>Ngoài định dạng sách điện tử truyền thống (PDF), chúng tôi còn đẩy mạnh phát triển sách nói (audio) — giải pháp phù hợp với nhịp sống hiện đại, giúp người nghe tiếp nhận tri thức trong lúc nghỉ ngơi hay thư giãn.</p>
-    <p>Toàn bộ nội dung sách được sưu tầm, tổng hợp từ các nguồn tài nguyên sẵn có trên Internet với mục đích chia sẻ phục vụ bạn đọc hoàn toàn miễn phí.</p>
+    <p>Thư viện số Mini không chỉ là một kho sách trực tuyến, mà là "người bạn đồng hành" công nghệ, giúp bạn làm chủ kiến thức và bứt phá giới hạn bản thân. Thay vì những tủ sách cồng kềnh, kho lưu trữ này nằm trọn trong một ứng dụng hoặc website. Nó được thiết kế nhỏ gọn để người dùng có thể dễ dàng truy cập, đọc và tìm kiếm tài liệu mọi lúc, mọi nơi thông qua các thiết bị thông minh (điện thoại, máy tính bảng) có kết nối internet. Dễ dàng tra cứu, phân loại và cập nhật đầu sách mới.</p>
+    <p>Ngoài định dạng sách điện tử truyền thống (PDF), chúng tôi còn đẩy mạnh phát triển sách nói (audio) — một giải pháp phù hợp với nhịp sống hiện đại, giúp người nghe có thể tiếp nhận tri thức trong lúc nghỉ ngơi, làm việc nhà hay thư giãn.</p>
+    <p>Toàn bộ nội dung sách được sưu tầm, tổng hợp từ các nguồn tài nguyên sẵn có trên Internet, với mục đích chia sẻ phục vụ bạn đọc. Tất cả sách điện tử tại Thư viện số Mini trường THCS Phú Bài hoàn toàn miễn phí.</p>
+    <p>Hãy biến chiếc điện thoại của bạn thành một giảng đường thu nhỏ. Click để khám phá và chinh phục đỉnh cao tri thức ngay hôm nay!</p>
     <div class="intro-qr-row">
       <div class="qr-label">QUÉT MÃ QR — KHÁM PHÁ NGAY!</div>
       <div id="introQrHost"></div>
     </div>
+    <p style="text-align:center; font-weight:700; color:var(--ink-hi);">Hãy cùng học sinh THCS Phú Bài làm chủ công nghệ, chinh phục tương lai!</p>
     <div class="modal-actions">
       <button class="btn-primary" id="introCloseBtn" style="flex:1;">Bắt đầu khám phá</button>
     </div>
@@ -567,7 +574,7 @@
 </div>
 <button class="intro-tab" id="introTab">📖 Giới thiệu</button>
 
-<!-- ================= Chatbox hỏi-đáp tự động ================= -->
+<!-- ================= Chatbox hỏi-đáp tự động — khung neo góc phải dưới ================= -->
 <button class="chat-fab" id="chatFab" title="Hỏi đáp nhanh">💬 <span class="chat-fab-label">Trợ lý AI</span></button>
 <div class="chat-panel" id="chatPanel">
   <div class="chat-panel-header">
@@ -582,8 +589,25 @@
   </div>
 </div>
 
+<!-- ================= Mã QR riêng cho từng thể loại ================= -->
+<div class="overlay" id="catQrOverlay">
+  <div class="modal" style="max-width:360px; text-align:center;">
+    <h3 id="catQrTitle">Mã QR thể loại</h3>
+    <div class="sub">Quét để mở thẳng danh mục này trên thư viện.</div>
+    <div id="catQrHost" style="display:flex; justify-content:center; margin:14px 0;"></div>
+    <div class="modal-actions"><button class="btn-secondary" id="catQrCloseBtn" style="flex:1;">Đóng</button></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+/* =====================================================================
+   1) CẤU HÌNH FIREBASE (đã điền theo project digitallibrary-af922)
+   LƯU Ý: databaseURL bên dưới được đoán theo khu vực Singapore
+   (asia-southeast1) như hướng dẫn trước đó. Vào Firebase Console →
+   Realtime Database, copy đúng URL hiển thị ở đầu trang và thay lại
+   nếu bạn chọn khu vực khác lúc tạo database.
+   ===================================================================== */
 const firebaseConfig = {
   apiKey: "AIzaSyCl3-xaXaeqxElke7A3nWpb3GYNo7IHUaA",
   authDomain: "digitallibrary-af922.firebaseapp.com",
@@ -593,597 +617,719 @@ const firebaseConfig = {
   messagingSenderId: "1056689777785",
   appId: "1:1056689777785:web:6c96d2bf55cd7a6e17b8a8"
 };
+// Mật khẩu quản trị — đổi thành mật khẩu riêng trước khi dùng thật.
 const ADMIN_PASSWORD = "admin2026";
+// Link mã QR trỏ tới — mặc định là trang web đang chạy trên GitHub Pages.
+const QR_TARGET_URL = "https://idwn0811.github.io/-DigitalLibrary/";
+// Bật AI thật cho chatbox (tuỳ chọn). Để trống thì chatbox dùng câu trả lời có sẵn (không cần key).
+// KHÔNG dán API key trực tiếp ở đây nữa — key được giữ kín trong Cloudflare Worker.
+// Dán URL của Worker (bước thiết lập ở README) vào đây, dạng:
+// https://ten-worker.ten-tai-khoan.workers.dev
+const AI_PROXY_URL = "https://hidden-paper-c789.truongpt0811.workers.dev/";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 
-// Khởi tạo Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const booksRef = db.ref("books");
+const categoriesRef = db.ref("categories");
+const DEFAULT_CATEGORIES = ["Văn học","Khoa học tự nhiên","Truyện tranh - Thiếu nhi","Kỹ năng sống","Radio truyện","Tài liệu học tập"];
 
-let booksData = [];
-let categoriesData = {};
-let currentCat = 'all';
-let currentSubCat = '';
-let isAdmin = false;
+/* =====================================================================
+   2) TRẠNG THÁI KẾT NỐI
+   ===================================================================== */
+db.ref(".info/connected").on("value", (snap) => {
+  const dot = document.getElementById("statusDot");
+  const label = document.getElementById("statusLabel");
+  if (snap.val() === true) {
+    dot.classList.add("on"); label.textContent = "Trực tuyến";
+  } else {
+    dot.classList.remove("on"); label.textContent = "Ngoại tuyến";
+  }
+});
+
+/* =====================================================================
+   3) GIAO DIỆN SÁNG / TỐI — mặc định sáng
+   ===================================================================== */
+const themeBtn = document.getElementById("themeBtn");
+function setTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+  localStorage.setItem("tvs_theme", theme);
+}
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  setTheme(cur === "dark" ? "light" : "dark");
+});
+setTheme(localStorage.getItem("tvs_theme") || "light");
+
+/* =====================================================================
+   4) CHẾ ĐỘ HIỂN THỊ: Máy tính / Điện thoại / Tự động (cả 2 chế độ đầu đều full màn hình ngang)
+   ===================================================================== */
+const appShell = document.getElementById("appShell");
+const modeToggle = document.getElementById("modeToggle");
+function setMode(mode){
+  appShell.classList.remove("mode-desktop","mode-mobile","mode-auto");
+  appShell.classList.add("mode-" + mode);
+  [...modeToggle.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b.dataset.mode === mode));
+  localStorage.setItem("tvs_view_mode", mode);
+}
+modeToggle.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-mode]");
+  if (btn) setMode(btn.dataset.mode);
+});
+setMode(localStorage.getItem("tvs_view_mode") || "auto");
+
+/* =====================================================================
+   5) THỂ LOẠI — quản trị có thể thêm / xoá
+   ===================================================================== */
+let categories = [];
+
+categoriesRef.once("value").then(snap => {
+  if (!snap.exists()){
+    const seed = {};
+    DEFAULT_CATEGORIES.forEach((name, i) => { seed["c" + (i + 1)] = { name, parentId: null }; });
+    categoriesRef.set(seed).catch(err => console.error("Không tạo được thể loại mặc định:", err.message));
+  }
+}).catch(err => console.error("Không đọc được nhánh categories:", err.message));
+
+categoriesRef.on("value", (snap) => {
+  const val = snap.val() || {};
+  // Tương thích ngược: mục cũ lưu dạng chuỗi thuần (chưa có parentId)
+  categories = Object.entries(val).map(([id, v]) => {
+    if (typeof v === "string") return { id, name: v, parentId: null };
+    return { id, name: v.name, parentId: v.parentId || null };
+  });
+  renderTabs();
+  renderCategorySelect();
+  renderCategoryParentSelect();
+  renderCategoryManager();
+  renderGrid();
+});
+
+function topLevelCategories(){ return categories.filter(c => !c.parentId); }
+function childrenOf(parentId){ return categories.filter(c => c.parentId === parentId); }
+function getDescendantNames(catName){
+  const cat = categories.find(c => c.name === catName);
+  if (!cat) return [catName];
+  const kids = childrenOf(cat.id).map(c => c.name);
+  return [catName, ...kids];
+}
+
+function renderTabs(){
+  const tabsEl = document.getElementById("tabs");
+  const subtabsEl = document.getElementById("subtabs");
+  const allNames = categories.map(c => c.name);
+  if (activeCat !== "all" && !allNames.includes(activeCat)) activeCat = "all";
+
+  // Xác định thư mục cha đang "trong ngữ cảnh" để quyết định có hiện hàng con hay không
+  let contextParent = null;
+  const directCat = categories.find(c => c.name === activeCat);
+  if (directCat){
+    contextParent = directCat.parentId ? categories.find(c => c.id === directCat.parentId) : directCat;
+  }
+
+  let html = `<button class="tab${activeCat === "all" ? " active" : ""}" data-cat="all">🔥 Xem nhiều nhất</button>`;
+  topLevelCategories().forEach(top => {
+    const isActiveTop = activeCat === top.name || (contextParent && contextParent.id === top.id);
+    html += `<button class="tab${isActiveTop ? " active" : ""}" data-cat="${escapeHtml(top.name)}">${escapeHtml(top.name)}</button>`;
+  });
+  tabsEl.innerHTML = html;
+
+  const kids = contextParent ? childrenOf(contextParent.id) : [];
+  if (kids.length > 0){
+    subtabsEl.style.display = "flex";
+    subtabsEl.innerHTML = kids.map(child =>
+      `<button class="tab sub-tab${activeCat === child.name ? " active" : ""}" data-cat="${escapeHtml(child.name)}">${escapeHtml(child.name)}</button>`
+    ).join("");
+  } else {
+    subtabsEl.style.display = "none";
+    subtabsEl.innerHTML = "";
+  }
+}
+
+function renderCategorySelect(){
+  const sel = document.getElementById("fCategory");
+  const current = sel.value;
+  let opts = [];
+  topLevelCategories().forEach(top => {
+    opts.push(`<option value="${escapeHtml(top.name)}">${escapeHtml(top.name)}</option>`);
+    childrenOf(top.id).forEach(child => {
+      opts.push(`<option value="${escapeHtml(child.name)}">— ${escapeHtml(child.name)}</option>`);
+    });
+  });
+  sel.innerHTML = opts.join("");
+  if (categories.some(c => c.name === current)) sel.value = current;
+}
+
+function renderCategoryParentSelect(){
+  const sel = document.getElementById("newCatParent");
+  const current = sel.value;
+  sel.innerHTML = `<option value="">— Không, đây là danh mục gốc —</option>` +
+    topLevelCategories().map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+  if ([...sel.options].some(o => o.value === current)) sel.value = current;
+}
+
+function renderCategoryManager(){
+  const list = document.getElementById("catList");
+  if (categories.length === 0){ list.innerHTML = `<div class="hint">Chưa có thể loại nào.</div>`; return; }
+  let html = "";
+  topLevelCategories().forEach(top => {
+    html += `
+    <div class="cat-row">
+      <span class="cat-row-name">${escapeHtml(top.name)}</span>
+      <div class="cat-row-btns">
+        <button class="admin-mini" data-catqr="${top.id}" data-catname="${escapeHtml(top.name)}" title="Mã QR">🔳</button>
+        <button class="admin-mini" data-delcat="${top.id}" title="Xoá">🗑️</button>
+      </div>
+    </div>`;
+    childrenOf(top.id).forEach(child => {
+      html += `
+      <div class="cat-row is-child">
+        <span class="cat-row-name">› ${escapeHtml(child.name)}</span>
+        <div class="cat-row-btns">
+          <button class="admin-mini" data-catqr="${child.id}" data-catname="${escapeHtml(child.name)}" title="Mã QR">🔳</button>
+          <button class="admin-mini" data-delcat="${child.id}" title="Xoá">🗑️</button>
+        </div>
+      </div>`;
+    });
+  });
+  list.innerHTML = html;
+}
+
+document.getElementById("addCatBtn").addEventListener("click", () => {
+  const input = document.getElementById("newCatName");
+  const parentSel = document.getElementById("newCatParent");
+  const msg = document.getElementById("catMsg");
+  msg.className = "form-msg";
+  const name = input.value.trim();
+  const parentId = parentSel.value || null;
+  if (!name) return;
+  if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())){ msg.textContent = "Thể loại này đã có rồi."; msg.classList.add("error"); return; }
+  categoriesRef.push({ name, parentId })
+    .then(() => { input.value = ""; parentSel.value = ""; msg.textContent = "Đã thêm thể loại!"; msg.classList.add("ok"); })
+    .catch(err => {
+      msg.textContent = "Không ghi được: " + err.message + " — kiểm tra lại Rules của Realtime Database (nhánh \"categories\" cần .write: true).";
+      msg.classList.add("error");
+    });
+});
+document.getElementById("catList").addEventListener("click", (e) => {
+  const delBtn = e.target.closest("[data-delcat]");
+  const qrBtn = e.target.closest("[data-catqr]");
+  const msg = document.getElementById("catMsg");
+  msg.className = "form-msg";
+  if (qrBtn){ openCategoryQR(qrBtn.dataset.catname); return; }
+  if (delBtn){
+    const id = delBtn.dataset.delcat;
+    if (childrenOf(id).length > 0){ msg.textContent = "Xoá hết thư mục con bên trong trước khi xoá thư mục cha này."; msg.classList.add("error"); return; }
+    if (confirm("Xoá thể loại này? Sách đã gắn thể loại cũ vẫn giữ nguyên nhãn, chỉ ẩn khỏi danh sách lọc.")){
+      categoriesRef.child(id).remove()
+        .catch(err => { msg.textContent = "Không xoá được: " + err.message; msg.classList.add("error"); });
+    }
+  }
+});
+document.getElementById("catCloseBtn").addEventListener("click", () => document.getElementById("catOverlay").classList.remove("open"));
+document.getElementById("fabCat").addEventListener("click", () => document.getElementById("catOverlay").classList.add("open"));
+document.getElementById("newCatName").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("addCatBtn").click(); });
+
+/* =====================================================================
+   6) DỮ LIỆU SÁCH — đọc realtime từ Firebase
+   ===================================================================== */
+let allBooks = [];
+let activeCat = new URLSearchParams(window.location.search).get("cat") || "all";
+let expandedAll = false;
+let activeType = "all";
+let searchTerm = "";
+let isAdmin = sessionStorage.getItem("tvs_admin") === "1";
+
+booksRef.on("value", (snap) => {
+  const val = snap.val() || {};
+  allBooks = Object.entries(val).map(([id, b]) => ({ id, ...b }));
+  renderStats();
+  renderGrid();
+}, (err) => {
+  console.error("Lỗi đọc dữ liệu Firebase:", err);
+});
+
+function renderStats(){
+  document.getElementById("statBooks").textContent = allBooks.length;
+  document.getElementById("statViews").textContent = allBooks.reduce((s,b)=>s+(b.views||0),0);
+  document.getElementById("statOpens").textContent = allBooks.reduce((s,b)=>s+(b.opens||0),0);
+}
+
+const typeMeta = {
+  ebook: { icon:"📘", label:"Ebook", action:"Đọc ngay" },
+  audio: { icon:"🎧", label:"Audio", action:"Nghe ngay" },
+  comic: { icon:"📗", label:"Truyện tranh", action:"Xem ngay" },
+  video: { icon:"🎬", label:"Video", action:"Xem video" }
+};
+
+function renderGrid(){
+  const grid = document.getElementById("grid");
+  const q = searchTerm.trim().toLowerCase();
+  const sourceBooks = allBooks.filter(b => {
+    if (activeCat !== "all" && !getDescendantNames(activeCat).includes(b.category)) return false;
+    if (activeType !== "all" && b.type !== activeType) return false;
+    if (q && !(`${b.title} ${b.author||""}`.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  const isFeaturedView = activeCat === "all" && activeType === "all" && !q && !expandedAll;
+  const filtered = isFeaturedView
+    ? [...sourceBooks].sort((a, b) => (b.views||0) - (a.views||0)).slice(0, 6)
+    : sourceBooks;
+
+  const heading = document.getElementById("gridHeading");
+  if (q) heading.textContent = `Kết quả tìm kiếm cho "${searchTerm.trim()}"`;
+  else if (activeCat === "all" && activeType === "all") heading.textContent = expandedAll ? "📚 Toàn bộ thư viện" : "🔥 Được xem nhiều nhất";
+  else if (activeCat !== "all") heading.textContent = "📂 " + activeCat;
+  else heading.textContent = "Kết quả lọc";
+
+  const showMoreWrap = document.getElementById("showMoreWrap");
+  showMoreWrap.style.display = (isFeaturedView && sourceBooks.length > 6) ? "flex" : "none";
+
+  if (filtered.length === 0){
+    grid.innerHTML = `<div class="empty-state"><h4>Chưa có sách nào ở đây</h4><p>${isAdmin ? 'Bấm "Thêm sách mới" để bắt đầu xây dựng thư viện.' : 'Thử đổi bộ lọc hoặc quay lại sau nhé.'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(b => {
+    const meta = typeMeta[b.type] || typeMeta.ebook;
+    return `
+    <div class="card type-${b.type}">
+      <div class="card-top">
+        <div class="type-icon type-${b.type}">${meta.icon}</div>
+        <span class="badge type-${b.type}">${meta.label}</span>
+      </div>
+      <div>
+        <h3>${escapeHtml(b.title)}</h3>
+        ${b.author ? `<div class="author">${escapeHtml(b.author)}</div>` : ""}
+      </div>
+      <div class="cat">${escapeHtml(b.category)}</div>
+      <div class="card-stats">
+        <span>👁 ${b.views||0} lượt xem</span>
+        <span>${meta.icon} ${b.opens||0} lượt mở</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn-open" data-open="${b.id}">${meta.action} ↗</button>
+        ${isAdmin ? `<button class="admin-mini" data-edit="${b.id}" title="Sửa">✏️</button>` : ""}
+        ${isAdmin ? `<button class="admin-mini" data-del="${b.id}" title="Xoá">🗑️</button>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function escapeHtml(str){
+  return (str||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+let viewedSession = new Set(JSON.parse(sessionStorage.getItem("tvs_viewed")||"[]"));
+function markViewedOnce(id){
+  if (viewedSession.has(id)) return;
+  viewedSession.add(id);
+  sessionStorage.setItem("tvs_viewed", JSON.stringify([...viewedSession]));
+  booksRef.child(id).child("views").transaction(v => (v||0)+1);
+}
+
+/* =====================================================================
+   Chuyển link Google Drive hoặc YouTube thành link nhúng xem trước (iframe)
+   Drive: /file/d/{id}/..., ?id={id}, /open?id={id}, /folders/{id}
+   YouTube: watch?v={id}, youtu.be/{id}, /shorts/{id}, /embed/{id}
+   ===================================================================== */
+function getDriveEmbedUrl(link){
+  let m = link.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/);
+  if (m) return `https://www.youtube.com/embed/${m[1]}`;
+
+  m = link.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  m = link.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/embeddedfolderview?id=${m[1]}#list`;
+  m = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  return null;
+}
+
+const viewerOverlay = document.getElementById("viewerOverlay");
+const viewerFrame = document.getElementById("viewerFrame");
+const viewerTitle = document.getElementById("viewerTitle");
+const viewerNewTab = document.getElementById("viewerNewTab");
+
+function openViewer(book){
+  const embedUrl = getDriveEmbedUrl(book.driveLink);
+  viewerTitle.textContent = book.title;
+  viewerNewTab.href = book.driveLink;
+  viewerFrame.src = embedUrl || "about:blank";
+  viewerOverlay.classList.add("open");
+  if (!embedUrl){
+    // Không đọc được ID từ link — mở thẳng tab mới thay vì để khung trắng
+    window.open(book.driveLink, "_blank", "noopener");
+  }
+}
+function closeViewer(){
+  viewerOverlay.classList.remove("open");
+  viewerFrame.src = "about:blank"; // dừng phát audio/video khi đóng
+}
+document.getElementById("viewerClose").addEventListener("click", closeViewer);
+viewerOverlay.addEventListener("click", (e) => { if (e.target === viewerOverlay) closeViewer(); });
+
+document.getElementById("grid").addEventListener("click", (e) => {
+  const openBtn = e.target.closest("[data-open]");
+  const editBtn = e.target.closest("[data-edit]");
+  const delBtn = e.target.closest("[data-del]");
+  if (openBtn){
+    const id = openBtn.dataset.open;
+    const book = allBooks.find(b => b.id === id);
+    if (book){
+      booksRef.child(id).child("opens").transaction(v => (v||0)+1);
+      openViewer(book);
+    }
+  }
+  if (editBtn){
+    const book = allBooks.find(b => b.id === editBtn.dataset.edit);
+    if (book) openBookModal(book);
+  }
+  if (delBtn){
+    const id = delBtn.dataset.del;
+    if (confirm("Xoá sách này khỏi thư viện?")) booksRef.child(id).remove();
+  }
+});
+
+const gridObserver = new MutationObserver(() => {
+  document.querySelectorAll("[data-open]").forEach(btn => markViewedOnce(btn.dataset.open));
+});
+gridObserver.observe(document.getElementById("grid"), { childList:true });
+
+/* =====================================================================
+   7) TÌM KIẾM + BỘ LỌC
+   ===================================================================== */
+document.getElementById("searchInput").addEventListener("input", (e) => { searchTerm = e.target.value; renderGrid(); });
+document.getElementById("typeFilter").addEventListener("change", (e) => { activeType = e.target.value; renderGrid(); });
+function handleTabClick(e){
+  const tab = e.target.closest(".tab");
+  if (!tab) return;
+  activeCat = tab.dataset.cat;
+  expandedAll = false;
+  renderTabs();
+  renderGrid();
+}
+document.getElementById("tabs").addEventListener("click", handleTabClick);
+document.getElementById("subtabs").addEventListener("click", handleTabClick);
+document.getElementById("showMoreBtn").addEventListener("click", () => { expandedAll = true; renderGrid(); });
+
+/* =====================================================================
+   8) ĐĂNG NHẬP QUẢN TRỊ (mật khẩu cố định trong file, không dùng Firebase Auth)
+   ===================================================================== */
+const loginOverlay = document.getElementById("loginOverlay");
+
+function updateAdminUI(){
+  document.getElementById("adminBtn").textContent = isAdmin ? "🔓" : "🔒";
+  document.getElementById("adminBtn").title = isAdmin ? "Đăng xuất quản trị" : "Đăng nhập quản trị";
+  document.getElementById("fabAdd").style.display = isAdmin ? "flex" : "none";
+  document.getElementById("fabCat").style.display = isAdmin ? "flex" : "none";
+  renderGrid();
+}
+
+document.getElementById("adminBtn").addEventListener("click", () => {
+  if (isAdmin) { isAdmin = false; sessionStorage.removeItem("tvs_admin"); updateAdminUI(); return; }
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginMsg").className = "form-msg";
+  loginOverlay.classList.add("open");
+});
+document.getElementById("loginCancel").addEventListener("click", () => loginOverlay.classList.remove("open"));
+
+document.getElementById("loginSubmit").addEventListener("click", () => {
+  const pass = document.getElementById("loginPass").value;
+  const msg = document.getElementById("loginMsg");
+  msg.className = "form-msg";
+  if (pass === ADMIN_PASSWORD){
+    isAdmin = true;
+    sessionStorage.setItem("tvs_admin", "1");
+    loginOverlay.classList.remove("open");
+    updateAdminUI();
+  } else {
+    msg.textContent = "Sai mật khẩu."; msg.classList.add("error");
+  }
+});
+document.getElementById("loginPass").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("loginSubmit").click();
+});
+
+updateAdminUI();
+
+/* =====================================================================
+   9) THÊM SÁCH MỚI
+   ===================================================================== */
+const bookOverlay = document.getElementById("bookOverlay");
 let editingBookId = null;
 
-// DOM Elements
-const grid = document.getElementById('grid');
-const tabs = document.getElementById('tabs');
-const subtabs = document.getElementById('subtabs');
-const searchInput = document.getElementById('searchInput');
-const typeFilter = document.getElementById('typeFilter');
-const gridHeading = document.getElementById('gridHeading');
-
-// Kết nối Realtime Database & Lắng nghe thay đổi
-function initApp() {
-  const statusDot = document.getElementById('statusDot');
-  const statusLabel = document.getElementById('statusLabel');
-
-  // Kiểm tra kết nối mạng Firebase
-  db.ref('.info/connected').on('value', (snap) => {
-    if (snap.val() === true) {
-      statusDot.classList.add('on');
-      statusLabel.textContent = 'Trực tuyến';
-    } else {
-      statusDot.classList.remove('on');
-      statusLabel.textContent = 'Mất kết nối';
-    }
-  });
-
-  // Lấy dữ liệu Thể loại
-  db.ref('categories').on('value', (snap) => {
-    categoriesData = snap.val() || {};
-    renderCategoryTabs();
-    populateCategorySelects();
-  });
-
-  // Lấy dữ liệu Sách
-  db.ref('books').on('value', (snap) => {
-    const val = snap.val() || {};
-    booksData = Object.keys(val).map(k => ({ id: k, ...val[k] }));
-    updateStats();
-    filterAndRenderBooks();
-  });
+function openBookModal(book){
+  editingBookId = book ? book.id : null;
+  document.getElementById("bookModalTitle").textContent = book ? "Sửa sách" : "Thêm sách mới";
+  document.getElementById("bookSubmit").textContent = book ? "Cập nhật" : "Lưu sách";
+  document.getElementById("fTitle").value = book ? book.title : "";
+  document.getElementById("fAuthor").value = book ? (book.author || "") : "";
+  document.getElementById("fType").value = book ? book.type : "ebook";
+  document.getElementById("fLink").value = book ? book.driveLink : "";
+  renderCategorySelect();
+  if (book) document.getElementById("fCategory").value = book.category;
+  document.getElementById("bookMsg").className = "form-msg";
+  bookOverlay.classList.add("open");
 }
 
-// Cập nhật thống kê
-function updateStats() {
-  let totalViews = 0;
-  let totalOpens = 0;
-  booksData.forEach(b => {
-    totalViews += (b.views || 0);
-    totalOpens += (b.opens || 0);
-  });
-  document.getElementById('statBooks').textContent = booksData.length;
-  document.getElementById('statViews').textContent = totalViews;
-  document.getElementById('statOpens').textContent = totalOpens;
-}
+document.getElementById("fabAdd").addEventListener("click", () => openBookModal(null));
+document.getElementById("bookCancel").addEventListener("click", () => bookOverlay.classList.remove("open"));
 
-// Hiển thị danh sách Thể loại lên Tab
-function renderCategoryTabs() {
-  // Giữ lại tab "Xem nhiều nhất" và "Mới cập nhật"
-  let html = `
-    <button class="tab ${currentCat === 'all' && !currentSubCat ? 'active' : ''}" data-cat="all">🔥 Xem nhiều nhất</button>
-    <button class="tab ${currentCat === 'latest' && !currentSubCat ? 'active' : ''}" data-cat="latest">✨ Mới cập nhật</button>
-  `;
+document.getElementById("bookSubmit").addEventListener("click", () => {
+  const title = document.getElementById("fTitle").value.trim();
+  const author = document.getElementById("fAuthor").value.trim();
+  const category = document.getElementById("fCategory").value;
+  const type = document.getElementById("fType").value;
+  const link = document.getElementById("fLink").value.trim();
+  const msg = document.getElementById("bookMsg");
+  msg.className = "form-msg";
 
-  Object.keys(categoriesData).forEach(catName => {
-    const item = categoriesData[catName];
-    const isParent = typeof item === 'object' && item !== null;
-    const active = currentCat === catName ? 'active' : '';
-    html += `<button class="tab ${active}" data-cat="${catName}">${catName}</button>`;
-  });
-
-  tabs.innerHTML = html;
-  renderSubTabs();
-}
-
-function renderSubTabs() {
-  if (currentCat !== 'all' && categoriesData[currentCat] && typeof categoriesData[currentCat] === 'object') {
-    const children = Object.keys(categoriesData[currentCat]);
-    if (children.length > 0) {
-      let html = `<button class="tab sub-tab ${!currentSubCat ? 'active' : ''}" data-sub="">Tất cả ${currentCat}</button>`;
-      children.forEach(sub => {
-        const active = currentSubCat === sub ? 'active' : '';
-        html += `<button class="tab sub-tab ${active}" data-sub="${sub}">${sub}</button>`;
-      });
-      subtabs.innerHTML = html;
-      subtabs.style.display = 'flex';
-      return;
-    }
+  if (!title || !link){
+    msg.textContent = "Vui lòng nhập tên sách và link Google Drive."; msg.classList.add("error"); return;
   }
-  subtabs.style.display = 'none';
-  subtabs.innerHTML = '';
-}
+  if (!link.includes("drive.google.com") && !link.includes("youtube.com") && !link.includes("youtu.be")){
+    msg.textContent = "Link phải là link Google Drive hoặc YouTube hợp lệ."; msg.classList.add("error"); return;
+  }
+  if (!category){
+    msg.textContent = "Chưa có thể loại nào — vào \"🏷️ Thể loại\" để thêm trước."; msg.classList.add("error"); return;
+  }
 
-// Đổ dữ liệu vào select thể loại khi thêm/sửa sách
-function populateCategorySelects() {
-  const fCategory = document.getElementById('fCategory');
-  const newCatParent = document.getElementById('newCatParent');
-  
-  let fHtml = '';
-  let pHtml = '<option value="">— Không, đây là danh mục gốc —</option>';
-
-  Object.keys(categoriesData).forEach(cat => {
-    fHtml += `<option value="${cat}">${cat}</option>`;
-    pHtml += `<option value="${cat}">${cat}</option>`;
-    const item = categoriesData[cat];
-    if (typeof item === 'object' && item !== null) {
-      Object.keys(item).forEach(sub => {
-        fHtml += `<option value="${cat} > ${sub}">— ${sub} (${cat})</option>`;
-      });
-    }
-  });
-
-  fCategory.innerHTML = fHtml;
-  newCatParent.innerHTML = pHtml;
-  renderAdminCatList();
-}
-
-// Lọc và hiển thị sách
-function filterAndRenderBooks() {
-  const keyword = searchInput.value.toLowerCase().trim();
-  const typeVal = typeFilter.value;
-
-  let result = [...booksData];
-
-  // Lọc theo Tab chính
-  if (currentCat === 'latest') {
-    gridHeading.innerHTML = '✨ Sách mới cập nhật';
-    // Sắp xếp theo ID hoặc thời gian tạo giảm dần
-    result.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-  } else if (currentCat === 'all') {
-    gridHeading.innerHTML = '🔥 Được xem nhiều nhất';
-    result.sort((a, b) => (b.views || 0) - (a.views || 0));
+  if (editingBookId){
+    booksRef.child(editingBookId).update({
+      title, author, category, type, driveLink: link
+    }).then(() => {
+      msg.textContent = "Đã cập nhật sách!"; msg.classList.add("ok");
+      setTimeout(() => bookOverlay.classList.remove("open"), 700);
+    }).catch(err => { msg.textContent = "Lỗi: " + err.message; msg.classList.add("error"); });
   } else {
-    gridHeading.innerHTML = `📚 Thể loại: ${currentCat} ${currentSubCat ? ' › ' + currentSubCat : ''}`;
-    result = result.filter(b => {
-      if (!b.category) return false;
-      if (currentSubCat) {
-        return b.category === `${currentCat} > ${currentSubCat}` || b.category === currentSubCat;
-      }
-      return b.category === currentCat || b.category.startsWith(currentCat + ' >');
-    });
+    booksRef.push({
+      title, author, category, type, driveLink: link,
+      views:0, opens:0, addedAt: Date.now(), addedBy: "admin"
+    }).then(() => {
+      msg.textContent = "Đã thêm sách thành công!"; msg.classList.add("ok");
+      setTimeout(() => bookOverlay.classList.remove("open"), 700);
+    }).catch(err => { msg.textContent = "Lỗi: " + err.message; msg.classList.add("error"); });
   }
+});
 
-  // Lọc theo loại (ebook, audio, comic, video)
-  if (typeVal !== 'all') {
-    result = result.filter(b => b.type === typeVal);
-  }
+/* =====================================================================
+   10) MÃ QR GIỚI THIỆU — hiển thị trực tiếp trên trang, xem/lưu tại chỗ
+   ===================================================================== */
+const qrHidden = document.createElement("div");
+qrHidden.style.position = "absolute";
+qrHidden.style.left = "-9999px";
+document.body.appendChild(qrHidden);
+new QRCode(qrHidden, {
+  text: QR_TARGET_URL,
+  width: 320, height: 320,
+  colorDark: "#171b2e", colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.M
+});
 
-  // Lọc theo từ khóa tìm kiếm
-  if (keyword) {
-    result = result.filter(b => 
-      (b.title && b.title.toLowerCase().includes(keyword)) ||
-      (b.author && b.author.toLowerCase().includes(keyword))
-    );
-  }
+function buildPosterInline(){
+  const qrCanvas = qrHidden.querySelector("canvas");
+  if (!qrCanvas){ setTimeout(buildPosterInline, 300); return; }
 
-  renderGrid(result);
+  const W = 640, H = 860;
+  const poster = document.createElement("canvas");
+  poster.width = W; poster.height = H;
+  const ctx = poster.getContext("2d");
+
+  ctx.fillStyle = "#faf7ef"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#c8912f"; ctx.lineWidth = 3; ctx.strokeRect(20, 20, W - 40, H - 40);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#171b2e";
+  ctx.font = "800 34px 'Be Vietnam Pro'";
+  ctx.fillText("THƯ VIỆN SỐ", W / 2, 105);
+  ctx.fillStyle = "#a9741d";
+  ctx.font = "700 22px 'Be Vietnam Pro'";
+  ctx.fillText("THCS PHÚ BÀI", W / 2, 142);
+
+  const qrSize = 340;
+  ctx.drawImage(qrCanvas, (W - qrSize) / 2, 195, qrSize, qrSize);
+
+  ctx.fillStyle = "#171b2e";
+  ctx.font = "600 23px 'Be Vietnam Pro'";
+  ctx.fillText("Quét mã để mở thư viện số", W / 2, 592);
+  ctx.fillStyle = "#525873";
+  ctx.font = "400 16px 'Be Vietnam Pro'";
+  ctx.fillText("Đọc ebook · Nghe audio book · Xem truyện tranh", W / 2, 624);
+  ctx.fillStyle = "#878da8";
+  ctx.font = "500 14px 'JetBrains Mono'";
+  ctx.fillText("idwn0811.github.io", W / 2, 662);
+
+  document.getElementById("qrPosterHost").appendChild(poster);
+}
+document.fonts.ready.then(() => setTimeout(buildPosterInline, 200));
+
+/* =====================================================================
+   11) POPUP GIỚI THIỆU — tự mở lần đầu, đóng thì thu về góc trái
+   ===================================================================== */
+const introOverlay = document.getElementById("introOverlay");
+const introTab = document.getElementById("introTab");
+
+function openIntro(){ introOverlay.classList.add("open"); }
+function closeIntro(){
+  introOverlay.classList.remove("open");
+  localStorage.setItem("tvs_intro_seen", "1");
+  introTab.style.display = "flex";
+}
+document.getElementById("introCloseBtn").addEventListener("click", closeIntro);
+introOverlay.addEventListener("click", (e) => { if (e.target === introOverlay) closeIntro(); });
+introTab.addEventListener("click", openIntro);
+
+if (!localStorage.getItem("tvs_intro_seen")) {
+  setTimeout(openIntro, 400);
+} else {
+  introTab.style.display = "flex";
 }
 
-function renderGrid(list) {
-  if (list.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state">
-        <h4>Không tìm thấy tài liệu phù hợp</h4>
-        <p>Thử tìm với từ khóa khác hoặc chọn danh mục khác nhé!</p>
-      </div>
-    `;
-    return;
-  }
+// QR nhỏ trong popup giới thiệu, trỏ thẳng về trang chủ thư viện
+const introQrHidden = document.createElement("div");
+introQrHidden.style.position = "absolute";
+introQrHidden.style.left = "-9999px";
+document.body.appendChild(introQrHidden);
+new QRCode(introQrHidden, { text: QR_TARGET_URL, width: 160, height: 160, colorDark: "#171b2e", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+function mountIntroQr(){
+  const img = introQrHidden.querySelector("img");
+  const canvas = introQrHidden.querySelector("canvas");
+  const el = img || canvas;
+  if (!el){ setTimeout(mountIntroQr, 200); return; }
+  el.style.display = ""; // thư viện QR có thể ẩn phần tử này bằng inline style, cần bỏ đi để hiện ra
+  document.getElementById("introQrHost").appendChild(el);
+}
+mountIntroQr();
 
-  let html = '';
-  list.forEach(book => {
-    const typeClass = `type-${book.type || 'ebook'}`;
-    const typeLabel = book.type === 'audio' ? 'Audio' : book.type === 'comic' ? 'Truyện' : book.type === 'video' ? 'Video' : 'Ebook';
-    const iconSymbol = book.type === 'audio' ? '🎧' : book.type === 'comic' ? '📗' : book.type === 'video' ? '🎬' : '📘';
+/* =====================================================================
+   12) MÃ QR RIÊNG CHO TỪNG THỂ LOẠI
+   ===================================================================== */
+const catQrOverlay = document.getElementById("catQrOverlay");
+function openCategoryQR(name){
+  document.getElementById("catQrTitle").textContent = "Mã QR: " + name;
+  const host = document.getElementById("catQrHost");
+  host.innerHTML = "";
+  const targetUrl = QR_TARGET_URL + "?cat=" + encodeURIComponent(name);
+  new QRCode(host, { text: targetUrl, width: 220, height: 220, colorDark: "#171b2e", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+  catQrOverlay.classList.add("open");
+}
+document.getElementById("catQrCloseBtn").addEventListener("click", () => catQrOverlay.classList.remove("open"));
+catQrOverlay.addEventListener("click", (e) => { if (e.target === catQrOverlay) catQrOverlay.classList.remove("open"); });
 
-    html += `
-      <div class="card ${typeClass}">
-        <div class="card-top">
-          <div class="type-icon ${typeClass}">${iconSymbol}</div>
-          <span class="badge ${typeClass}">${typeLabel}</span>
-        </div>
-        <div>
-          <h3>${escapeHtml(book.title)}</h3>
-          <div class="author">${escapeHtml(book.author || 'Đang cập nhật')}</div>
-        </div>
-        <div class="cat">📁 ${escapeHtml(book.category || 'Chung')}</div>
-        <div class="card-stats">
-          <span>👁️ ${book.views || 0} lượt xem</span>
-          <span>📖 ${book.opens || 0} lượt đọc</span>
-        </div>
-        <div class="card-actions">
-          <button class="btn-open" onclick="openBook('${book.id}')">
-            ${book.type === 'video' ? 'Xem video ↗' : book.type === 'audio' ? 'Nghe ngay ↗' : 'Đọc ngay ↗'}
-          </button>
-          ${isAdmin ? `<button class="admin-mini" onclick="editBook('${book.id}')" title="Sửa">✏️</button>` : ''}
-          ${isAdmin ? `<button class="admin-mini" onclick="deleteBook('${book.id}')" title="Xoá">🗑️</button>` : ''}
-        </div>
-      </div>
-    `;
-  });
-  grid.innerHTML = html;
+/* =====================================================================
+   13) CHATBOX HỎI-ĐÁP TỰ ĐỘNG (dựa trên từ khoá, không cần máy chủ AI)
+   ===================================================================== */
+const FAQ_DATA = [
+  { keywords:["mượn"], answer:"Thư viện số này không cần mượn — bạn chỉ cần bấm \"Đọc ngay / Nghe ngay\" trên mỗi cuốn sách là xem được ngay, hoàn toàn miễn phí." },
+  { keywords:["thêm sách","đăng sách","góp sách","gửi sách"], answer:"Chỉ tài khoản quản trị (thủ thư/giáo viên phụ trách) mới thêm được sách mới. Nếu bạn muốn đóng góp sách, hãy liên hệ trực tiếp thầy/cô phụ trách thư viện nhé." },
+  { keywords:["giờ mở cửa","mấy giờ","thời gian mở"], answer:"Thư viện số hoạt động 24/7 — bạn đọc sách bất cứ lúc nào, chỉ cần có kết nối internet." },
+  { keywords:["miễn phí","tốn tiền","trả phí","giá tiền"], answer:"Toàn bộ sách trên Thư viện số Mini đều hoàn toàn miễn phí." },
+  { keywords:["tải xuống","download","lưu về máy","lưu file"], answer:"Sách được xem trực tiếp trên trang qua Google Drive/YouTube, không hỗ trợ tải file về máy để tôn trọng bản quyền và tiết kiệm dung lượng." },
+  { keywords:["liên hệ","hỗ trợ","góp ý","phản hồi"], answer:"Bạn có thể liên hệ trực tiếp thầy/cô phụ trách thư viện tại trường THCS Phú Bài để được hỗ trợ hoặc góp ý nhé." },
+  { keywords:["thể loại","danh mục","phân loại","tìm sách","tìm kiếm"], answer:"Bạn có thể lọc sách theo thể loại ở thanh menu ngay dưới ô tìm kiếm, hoặc gõ từ khoá vào ô tìm kiếm phía trên để tra cứu nhanh." },
+  { keywords:["qr"], answer:"Mỗi thể loại đều có mã QR riêng (thủ thư tạo trong mục \"🏷️ Thể loại\") — quét mã là mở thẳng đúng danh mục đó, không cần tìm lại." }
+];
+function findFaqAnswer(text){
+  const t = text.toLowerCase();
+  const hit = FAQ_DATA.find(f => f.keywords.some(k => t.includes(k)));
+  return hit ? hit.answer : "Mình chưa có câu trả lời sẵn cho câu hỏi này. Bạn thử hỏi cách khác, hoặc liên hệ trực tiếp thầy/cô phụ trách thư viện nhé!";
 }
 
-function escapeHtml(str) {
-  return str.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """).replace(/'/g, "'");
-}
+const chatPanel = document.getElementById("chatPanel");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+let chatStarted = false;
 
-// Xử lý mở sách / tăng lượt xem
-window.openBook = function(id) {
-  const book = booksData.find(b => b.id === id);
-  if (!book) return;
-
-  // Tăng lượt mở
-  db.ref(`books/${id}`).update({ opens: (book.opens || 0) + 1 });
-  db.ref(`books/${id}`).update({ views: (book.views || 0) + 1 });
-
-  let link = book.link;
-  if (!link) return;
-
-  // Xử lý link YouTube hoặc Google Drive để xem nhúng hoặc mở tab mới
-  if (link.includes('youtube.com') || link.includes('youtu.be')) {
-    let embedUrl = link;
-    if (link.includes('watch?v=')) {
-      embedUrl = link.replace('watch?v=', 'embed/');
-    } else if (link.includes('youtu.be/')) {
-      embedUrl = link.replace('youtu.be/', 'www.youtube.com/embed/');
-    }
-    openViewer(book.title, embedUrl, link);
-  } else if (link.includes('drive.google.com')) {
-    // Chuyển link view thành preview nếu cần
-    let embedUrl = link.replace('/view?usp=sharing', '/preview').replace('/view', '/preview');
-    openViewer(book.title, embedUrl, link);
-  } else {
-    window.open(link, '_blank');
-  }
-};
-
-function openViewer(title, embedUrl, originalLink) {
-  document.getElementById('viewerTitle').textContent = title;
-  document.getElementById('viewerFrame').src = embedUrl;
-  document.getElementById('viewerNewTab').href = originalLink;
-  document.getElementById('viewerOverlay').classList.add('open');
-}
-
-document.getElementById('viewerClose').addEventListener('click', () => {
-  document.getElementById('viewerOverlay').classList.remove('open');
-  document.getElementById('viewerFrame').src = 'about:blank';
-});
-
-// Sự kiện chọn tab chính
-tabs.addEventListener('click', (e) => {
-  const btn = e.target.closest('.tab');
-  if (!btn) return;
-  currentCat = btn.getAttribute('data-cat');
-  currentSubCat = '';
-  document.querySelectorAll('#tabs .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderSubTabs();
-  filterAndRenderBooks();
-});
-
-// Sự kiện chọn sub-tab
-subtabs.addEventListener('click', (e) => {
-  const btn = e.target.closest('.tab');
-  if (!btn) return;
-  currentSubCat = btn.getAttribute('data-sub');
-  document.querySelectorAll('#subtabs .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  filterAndRenderBooks();
-});
-
-searchInput.addEventListener('input', filterAndRenderBooks);
-typeFilter.addEventListener('change', filterAndRenderBooks);
-
-// Chuyển đổi giao diện Sáng / Tối
-const themeBtn = document.getElementById('themeBtn');
-themeBtn.addEventListener('click', () => {
-  const htmlEl = document.documentElement;
-  const current = htmlEl.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  htmlEl.setAttribute('data-theme', next);
-  themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
-});
-
-// Chế độ xem (Máy tính, Điện thoại, Tự động)
-const appShell = document.getElementById('appShell');
-document.getElementById('modeToggle').addEventListener('click', (e) => {
-  const btn = e.target.closest('button');
-  if (!btn) return;
-  const mode = btn.getAttribute('data-mode');
-  document.querySelectorAll('#modeToggle button').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  appShell.className = `app-shell mode-${mode}`;
-});
-
-// Quản trị & Đăng nhập
-const adminBtn = document.getElementById('adminBtn');
-const loginOverlay = document.getElementById('loginOverlay');
-const bookOverlay = document.getElementById('bookOverlay');
-const catOverlay = document.getElementById('catOverlay');
-const fabAdd = document.getElementById('fabAdd');
-const fabCat = document.getElementById('fabCat');
-
-adminBtn.addEventListener('click', () => {
-  if (isAdmin) {
-    if (confirm('Bạn có muốn đăng xuất khỏi chế độ quản trị không?')) {
-      isAdmin = false;
-      fabAdd.style.display = 'none';
-      fabCat.style.display = 'none';
-      adminBtn.textContent = '🔒';
-      filterAndRenderBooks();
-    }
-  } else {
-    loginOverlay.classList.add('open');
-  }
-});
-
-document.getElementById('loginCancel').addEventListener('click', () => loginOverlay.classList.remove('open'));
-document.getElementById('loginSubmit').addEventListener('click', () => {
-  const pass = document.getElementById('loginPass').value;
-  if (pass === ADMIN_PASSWORD) {
-    isAdmin = true;
-    loginOverlay.classList.remove('open');
-    document.getElementById('loginPass').value = '';
-    fabAdd.style.display = 'flex';
-    fabCat.style.display = 'flex';
-    adminBtn.textContent = '🔓';
-    alert('Đăng nhập quản trị thành công!');
-    filterAndRenderBooks();
-  } else {
-    const msg = document.getElementById('loginMsg');
-    msg.textContent = 'Mật khẩu không chính xác!';
-    msg.className = 'form-msg error';
-  }
-});
-
-// Thêm / Sửa sách
-fabAdd.addEventListener('click', () => {
-  editingBookId = null;
-  document.getElementById('bookModalTitle').textContent = 'Thêm sách mới';
-  document.getElementById('fTitle').value = '';
-  document.getElementById('fAuthor').value = '';
-  document.getElementById('fLink').value = '';
-  bookOverlay.classList.add('open');
-});
-
-document.getElementById('bookCancel').addEventListener('click', () => bookOverlay.classList.remove('open'));
-document.getElementById('bookSubmit').addEventListener('click', () => {
-  const title = document.getElementById('fTitle').value.trim();
-  const author = document.getElementById('fAuthor').value.trim();
-  const category = document.getElementById('fCategory').value;
-  const type = document.getElementById('fType').value;
-  const link = document.getElementById('fLink').value.trim();
-  const msg = document.getElementById('bookMsg');
-
-  if (!title || !link) {
-    msg.textContent = 'Vui lòng nhập tên sách và đường dẫn!';
-    msg.className = 'form-msg error';
-    return;
-  }
-
-  const bookData = {
-    title,
-    author,
-    category,
-    type,
-    link,
-    createdAt: Date.now()
-  };
-
-  if (editingBookId) {
-    db.ref(`books/${editingBookId}`).update(bookData, (err) => {
-      if (err) {
-        msg.textContent = 'Lỗi: ' + err.message;
-        msg.className = 'form-msg error';
-      } else {
-        bookOverlay.classList.remove('open');
-      }
-    });
-  } else {
-    bookData.views = 0;
-    bookData.opens = 0;
-    db.ref('books').push(bookData, (err) => {
-      if (err) {
-        msg.textContent = 'Lỗi: ' + err.message;
-        msg.className = 'form-msg error';
-      } else {
-        bookOverlay.classList.remove('open');
-      }
-    });
-  }
-});
-
-window.editBook = function(id) {
-  const book = booksData.find(b => b.id === id);
-  if (!book) return;
-  editingBookId = id;
-  document.getElementById('bookModalTitle').textContent = 'Sửa thông tin sách';
-  document.getElementById('fTitle').value = book.title || '';
-  document.getElementById('fAuthor').value = book.author || '';
-  document.getElementById('fCategory').value = book.category || '';
-  document.getElementById('fType').value = book.type || 'ebook';
-  document.getElementById('fLink').value = book.link || '';
-  bookOverlay.classList.add('open');
-};
-
-window.deleteBook = function(id) {
-  if (confirm('Bạn có chắc chắn muốn xoá đầu sách này không?')) {
-    db.ref(`books/${id}`).remove();
-  }
-};
-
-// Quản lý thể loại
-fabCat.addEventListener('click', () => catOverlay.classList.add('open'));
-document.getElementById('catCloseBtn').addEventListener('click', () => catOverlay.classList.remove('open'));
-
-document.getElementById('addCatBtn').addEventListener('click', () => {
-  const name = document.getElementById('newCatName').value.trim();
-  const parent = document.getElementById('newCatParent').value;
-  const msg = document.getElementById('catMsg');
-
-  if (!name) {
-    msg.textContent = 'Vui lòng nhập tên thể loại!';
-    msg.className = 'form-msg error';
-    return;
-  }
-
-  if (parent) {
-    db.ref(`categories/${parent}/${name}`).set(true, (err) => {
-      if (err) {
-        msg.textContent = 'Lỗi: ' + err.message;
-        msg.className = 'form-msg error';
-      } else {
-        document.getElementById('newCatName').value = '';
-        msg.textContent = 'Thêm danh mục con thành công!';
-        msg.className = 'form-msg ok';
-      }
-    });
-  } else {
-    db.ref(`categories/${name}`).set(true, (err) => {
-      if (err) {
-        msg.textContent = 'Lỗi: ' + err.message;
-        msg.className = 'form-msg error';
-      } else {
-        document.getElementById('newCatName').value = '';
-        msg.textContent = 'Thêm danh mục thành công!';
-        msg.className = 'form-msg ok';
-      }
-    });
-  }
-});
-
-function renderAdminCatList() {
-  const list = document.getElementById('catList');
-  let html = '';
-  Object.keys(categoriesData).forEach(cat => {
-    html += `
-      <div class="cat-row">
-        <span class="cat-row-name">📁 ${cat}</span>
-        <div class="cat-row-btns">
-          <button class="admin-mini" onclick="deleteCat('${cat}')" title="Xoá">✕</button>
-        </div>
-      </div>
-    `;
-    const item = categoriesData[cat];
-    if (typeof item === 'object' && item !== null) {
-      Object.keys(item).forEach(sub => {
-        html += `
-          <div class="cat-row is-child">
-            <span class="cat-row-name">↳ ${sub}</span>
-            <div class="cat-row-btns">
-              <button class="admin-mini" onclick="deleteSubCat('${cat}', '${sub}')" title="Xoá">✕</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-  });
-  list.innerHTML = html || '<div style="font-size:12.5px; color:var(--ink-low);">Chưa có thể loại nào.</div>';
-}
-
-window.deleteCat = function(cat) {
-  if (confirm(`Xoá thể loại "${cat}" sẽ xoá cả các danh mục con bên trong?`)) {
-    db.ref(`categories/${cat}`).remove();
-  }
-};
-
-window.deleteSubCat = function(cat, sub) {
-  if (confirm(`Xoá danh mục con "${sub}"?`)) {
-    db.ref(`categories/${cat}/${sub}`).remove();
-  }
-};
-
-// Tạo mã QR giới thiệu trang
-window.addEventListener('load', () => {
-  const currentUrl = window.location.href;
-  new QRCode(document.getElementById('qrPosterHost'), {
-    text: currentUrl,
-    width: 150,
-    height: 150
-  });
-  new QRCode(document.getElementById('introQrHost'), {
-    text: currentUrl,
-    width: 130,
-    height: 130
-  });
-});
-
-// Popup Giới thiệu
-const introOverlay = document.getElementById('introOverlay');
-const introTab = document.getElementById('introTab');
-
-document.getElementById('introCloseBtn').addEventListener('click', () => {
-  introOverlay.classList.remove('open');
-  introTab.style.display = 'flex';
-});
-introTab.addEventListener('click', () => {
-  introOverlay.classList.add('open');
-  introTab.style.display = 'none';
-});
-// Tự mở modal giới thiệu lần đầu
-setTimeout(() => { introOverlay.classList.add('open'); }, 400);
-
-// Chatbox Trợ lý AI hỏi đáp nhanh
-const chatFab = document.getElementById('chatFab');
-const chatPanel = document.getElementById('chatPanel');
-const chatCloseBtn = document.getElementById('chatCloseBtn');
-const chatInput = document.getElementById('chatInput');
-const chatSendBtn = document.getElementById('chatSendBtn');
-const chatMessages = document.getElementById('chatMessages');
-
-chatFab.addEventListener('click', () => {
-  chatPanel.classList.toggle('open');
-  if (chatPanel.classList.contains('open') && chatMessages.children.length === 0) {
-    appendBotMessage('Xin chào! Mình là Trợ lý AI của Thư Viện Số THCS Phú Bài. Bạn muốn tìm sách gì hay cần giúp gì nào?');
-  }
-});
-chatCloseBtn.addEventListener('click', () => chatPanel.classList.remove('open'));
-
-function appendBotMessage(text) {
-  const div = document.createElement('div');
-  div.className = 'chat-bubble bot';
-  div.textContent = text;
-  chatMessages.appendChild(div);
+function addChatMessage(role, text){
+  const el = document.createElement("div");
+  el.className = "chat-bubble " + role;
+  el.textContent = text;
+  chatMessages.appendChild(el);
   chatMessages.scrollTop = chatMessages.scrollHeight;
+  return el;
 }
 
-function appendUserMessage(text) {
-  const div = document.createElement('div');
-  div.className = 'chat-bubble user';
-  div.textContent = text;
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+/* AI thật (Gemini) — trả lời dựa trên đúng danh sách sách/thể loại hiện có */
+function buildLibraryContext(){
+  const catLines = categories.map(c => {
+    const parent = c.parentId ? categories.find(p => p.id === c.parentId) : null;
+    return parent ? `- ${c.name} (thuộc thư mục: ${parent.name})` : `- ${c.name}`;
+  }).join("\n");
+  const bookLines = allBooks.slice(0, 200).map(b =>
+    `- "${b.title}"${b.author ? " của " + b.author : ""} — thể loại: ${b.category}, định dạng: ${b.type}`
+  ).join("\n");
+  return `DANH SÁCH THỂ LOẠI:\n${catLines || "(chưa có)"}\n\nDANH SÁCH SÁCH/AUDIO/VIDEO HIỆN CÓ (tối đa 200 mục):\n${bookLines || "(chưa có sách nào)"}`;
 }
 
-function handleChatSend() {
+async function callGroqOnce(sys, question){
+  const res = await fetch(AI_PROXY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: [
+        { role: "system", content: sys },
+        { role: "user", content: question }
+      ]
+    })
+  });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  const answer = data?.choices?.[0]?.message?.content;
+  if (!answer) throw new Error("Không nhận được phản hồi từ AI");
+  return answer.trim();
+}
+
+async function askAI(question){
+  const sys = "Bạn là trợ lý ảo thân thiện của Thư viện số Mini, trường THCS Phú Bài, trả lời cho học sinh cấp 2. " +
+    "Trả lời ngắn gọn (2-4 câu), bằng tiếng Việt. Chỉ dựa vào dữ liệu thư viện dưới đây để trả lời các câu hỏi về sách, thể loại, tác giả; " +
+    "nếu không tìm thấy thông tin liên quan trong dữ liệu, hãy nói rõ là thư viện chưa có, không tự bịa ra sách không tồn tại. " +
+    "Nếu câu hỏi ngoài phạm vi thư viện, lịch sự từ chối và hướng người dùng quay lại chủ đề sách.\n\n" + buildLibraryContext();
+  return callGroqOnce(sys, question);
+}
+
+document.getElementById("chatFab").addEventListener("click", () => {
+  const willOpen = !chatPanel.classList.contains("open");
+  chatPanel.classList.toggle("open", willOpen);
+  if (willOpen){
+    if (!chatStarted){
+      chatStarted = true;
+      addChatMessage("bot", "Xin chào! Mình là trợ lý thư viện 🤖. Bạn có thể hỏi mình về cách đọc sách, thêm sách, thể loại, giờ mở cửa... nhé!");
+    }
+    chatInput.focus();
+  }
+});
+document.getElementById("chatCloseBtn").addEventListener("click", () => chatPanel.classList.remove("open"));
+document.addEventListener("click", (e) => {
+  if (!chatPanel.classList.contains("open")) return;
+  if (chatPanel.contains(e.target) || e.target.closest("#chatFab")) return;
+  chatPanel.classList.remove("open");
+});
+
+function sendChatMessage(){
   const text = chatInput.value.trim();
   if (!text) return;
-  appendUserMessage(text);
-  chatInput.value = '';
+  addChatMessage("user", text);
+  chatInput.value = "";
 
-  setTimeout(() => {
-    const lower = text.toLowerCase();
-    if (lower.includes('sách') || lower.includes('đọc') || lower.includes('tìm')) {
-      appendBotMessage(`Thư viện hiện có ${booksData.length} đầu sách và audio phong phú. Bạn có thể gõ từ khóa tên sách vào thanh tìm kiếm phía trên hoặc chọn tab "Mới cập nhật" để khám phá nhé!`);
-    } else if (lower.includes('phú bài') || lower.includes('trường')) {
-      appendBotMessage('Đây là Thư viện số Mini của trường THCS Phú Bài, được thiết kế để hỗ trợ học sinh học tập và khám phá tri thức hoàn toàn miễn phí!');
-    } else {
-      appendBotMessage(`Cảm ơn câu hỏi của bạn! Bạn có thể tra cứu trực tiếp các đầu sách theo thể loại hoặc liên hệ thủ thư trường THCS Phú Bài để được hỗ trợ chi tiết hơn nha.`);
-    }
-  }, 600);
+  if (AI_PROXY_URL){
+    const thinkingEl = addChatMessage("bot", "Đang trả lời…");
+    askAI(text)
+      .then(answer => { thinkingEl.textContent = answer; chatMessages.scrollTop = chatMessages.scrollHeight; })
+      .catch(err => {
+        thinkingEl.textContent = "AI đang gặp sự cố (" + err.message + "). Câu trả lời có sẵn: " + findFaqAnswer(text);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+  } else {
+    const answer = findFaqAnswer(text);
+    setTimeout(() => addChatMessage("bot", answer), 350);
+  }
 }
-
-chatSendBtn.addEventListener('click', handleChatSend);
-chatInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') handleChatSend();
-});
-
-// Khởi chạy ứng dụng
-initApp();
+document.getElementById("chatSendBtn").addEventListener("click", sendChatMessage);
+chatInput.addEventListener("keydown", (e) => { if (e.key === "Enter") sendChatMessage(); });
 </script>
 </body>
 </html>
